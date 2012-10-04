@@ -11,5 +11,6 @@
 #include <duck/default_constructible.hpp>
 #include <duck/equality_comparable.hpp>
 #include <duck/readable_iterator.hpp>
+#include <duck/writeable_iterator.hpp>
 
 #endif // !DUCK_HPP
