@@ -14,6 +14,7 @@
 #include <duck/forward_iterator.hpp>
 #include <duck/incrementable_iterator.hpp>
 #include <duck/lvalue_iterator.hpp>
+#include <duck/random_access_iterator.hpp>
 #include <duck/readable_iterator.hpp>
 #include <duck/single_pass_iterator.hpp>
 #include <duck/swappable_iterator.hpp>
