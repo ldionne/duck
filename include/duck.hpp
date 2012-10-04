@@ -13,6 +13,7 @@
 #include <duck/incrementable_iterator.hpp>
 #include <duck/lvalue_iterator.hpp>
 #include <duck/readable_iterator.hpp>
+#include <duck/single_pass_iterator.hpp>
 #include <duck/swappable_iterator.hpp>
 #include <duck/writeable_iterator.hpp>
 
