@@ -6,6 +6,7 @@
 #define DUCK_HPP
 
 #include <duck/assignable.hpp>
+#include <duck/bidirectional_iterator.hpp>
 #include <duck/comparable.hpp>
 #include <duck/copy_constructible.hpp>
 #include <duck/default_constructible.hpp>
