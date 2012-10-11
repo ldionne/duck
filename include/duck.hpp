@@ -10,6 +10,7 @@
 #include <duck/comparable.hpp>
 #include <duck/copy_constructible.hpp>
 #include <duck/default_constructible.hpp>
+#include <duck/destructible.hpp>
 #include <duck/equality_comparable.hpp>
 #include <duck/forward_iterator.hpp>
 #include <duck/incrementable_iterator.hpp>
