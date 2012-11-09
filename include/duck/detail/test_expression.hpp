@@ -25,13 +25,20 @@ namespace duck {
     }
 }
 
+/**
+ * Macro to make a name unique by mangling it with the line number.
+ */
+#define DUCK_I_UNIQUE(name) DUCK_I_CONCAT(name, __LINE__)
+#define DUCK_I_CONCAT(a, b) DUCK_I_CONCAT_PRIMITIVE(a, b)
+#define DUCK_I_CONCAT_PRIMITIVE(a, b) a ## b
+
 #define DUCK_I_TEST_BASE(name, as_expression, as_type, ...)                 \
-template <typename ...Args>                                                 \
+template <typename ...DUCK_I_UNIQUE(Args)>                                  \
 class name {                                                                \
     template <__VA_ARGS__> static                                           \
     /* void() is used to make sure no user-defined comma operator is used */\
-    decltype((as_expression, void(), ::std::true_type()))                   \
-    test_validity(void*);                                                   \
+    decltype((as_expression), void(), ::std::true_type())                   \
+    test_validity(int);                                                     \
                                                                             \
     template <__VA_ARGS__> static                                           \
     ::std::false_type test_validity(...);                                   \
@@ -41,12 +48,12 @@ class name {                                                                \
         using type = as_type;                                               \
     };                                                                      \
                                                                             \
-    using is_valid = decltype(test_validity<Args...>(nullptr));             \
+    using is_valid = decltype(test_validity<DUCK_I_UNIQUE(Args)...>(0));    \
                                                                             \
 public:                                                                     \
     using type =                                                            \
         typename ::mpl11::eval_if<is_valid,                                 \
-            delayed_type<Args...>,                                          \
+            delayed_type<DUCK_I_UNIQUE(Args)...>,                           \
             ::mpl11::identity<::duck::detail::invalid>                      \
         >::type;                                                            \
 }                                                                           \
