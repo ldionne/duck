@@ -1,9 +1,12 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 project(duck)
 
+add_definitions(-Wall -Wextra -pedantic -std=c++11)
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+    add_definitions(-stdlib=libc++)
+endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -std=c++11 -stdlib=libc++")
 include_directories(include)
 include_directories(${duck_SOURCE_DIR}/ext/mpl11/include)
 
