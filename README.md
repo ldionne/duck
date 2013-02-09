@@ -1,4 +1,4 @@
-# duck - concept-based static duck typing for C++11
+# duck - concept-based overloading for C++11
 `duck` is a template metaprogramming library providing primitives to check
 whether a type models a given concept. Basically, this is a reimplementation
 of _Boost.ConceptCheck_ where concepts are metafunctions returning booleans
