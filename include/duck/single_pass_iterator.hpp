@@ -1,5 +1,5 @@
 /**
- * This file defines the @em SinglePassIterator concept.
+ * This file defines the `SinglePassIterator` concept.
  */
 
 #ifndef DUCK_SINGLE_PASS_ITERATOR_HPP
@@ -14,16 +14,24 @@
 namespace duck {
 
 /**
- * Metafunction returning whether @em It models the @em SinglePassIterator
- * concept.
+ * Metafunction returning whether an `Iterator` models the
+ * `SinglePassIterator` concept.
  */
-template <typename It>
-struct SinglePassIterator
+template <typename Iterator>
+struct is_single_pass_iterator
     : boost::mpl::and_<
-        EqualityComparable<It>,
-        IncrementableIterator<It>
+        EqualityComparable<Iterator>,
+        IncrementableIterator<Iterator>
     >
 { };
+
+//! `SinglePassIterator` concept.
+struct SinglePassIterator {
+    template <typename Iterator>
+    struct apply
+        : is_single_pass_iterator<Iterator>
+    { };
+};
 
 } // end namespace duck
 

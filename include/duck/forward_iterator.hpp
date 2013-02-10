@@ -28,7 +28,7 @@ class is_forward_iterator_impl {
 public:
     typedef typename boost::mpl::and_<
                 DefaultConstructible<Iterator>,
-                SinglePassIterator<Iterator>,
+                is_single_pass_iterator<Iterator>,
                 detail::is_valid<Difference>,
                 boost::is_integral<Difference>,
                 boost::is_signed<Difference>

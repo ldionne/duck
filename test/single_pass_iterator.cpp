@@ -1,15 +1,16 @@
 /**
- * Test suite for the @em SinglePassIterator concept.
+ * Test suite for the `SinglePassIterator` concept.
  */
 
 #include <duck/single_pass_iterator.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 #include <vector>
 
 
-#define ASSERT_SPI(T) ASSERT_MODELS(duck::SinglePassIterator, T)
-#define ASSERT_NOT_SPI(T) ASSERT_NOT_MODELS(duck::SinglePassIterator, T)
+#define ASSERT_SPI(T) BOOST_MPL_ASSERT((duck::is_single_pass_iterator<T>))
+#define ASSERT_NOT_SPI(T) \
+    BOOST_MPL_ASSERT_NOT((duck::is_single_pass_iterator<T>))
 
 // Test with primitive types.
 ASSERT_SPI(int);
