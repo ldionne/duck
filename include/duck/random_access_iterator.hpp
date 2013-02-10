@@ -88,7 +88,7 @@ public:
                 >,
 
                 typename boost::mpl::if_<
-                    typename ReadableIterator<Iterator>::type,
+                    is_readable_iterator<Iterator>,
                     boost::is_convertible<
                         typename subscript<Iterator, Difference>::type, Value
                     >,

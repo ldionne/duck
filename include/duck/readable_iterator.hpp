@@ -1,5 +1,5 @@
 /**
- * This file defines the @em ReadableIterator concept.
+ * This file defines the `ReadableIterator` concept.
  */
 
 #ifndef DUCK_READABLE_ITERATOR_HPP
@@ -18,23 +18,25 @@
 namespace duck {
 
 /**
- * Metafunction returning whether @em It models the @em ReadableIterator
+ * Metafunction returning whether an `Iterator` models the `ReadableIterator`
  * concept.
  */
-template <typename It>
-class ReadableIterator {
+template <typename Iterator>
+class is_readable_iterator {
     DUCK_I_TEST_EXPRESSION(dereference, *boost::declval<I>(), typename I);
     DUCK_I_TEST_TYPE(value_type_,
                 typename detail::iterator_traits<I>::value_type, typename I);
-    typedef typename value_type_<It>::type Value;
+    typedef typename value_type_<Iterator>::type Value;
 
 public:
     typedef typename boost::mpl::and_<
-                Assignable<It>,
-                CopyConstructible<It>,
+                Assignable<Iterator>,
+                CopyConstructible<Iterator>,
 
                 detail::is_valid<Value>,
-                boost::is_convertible<typename dereference<It>::type, Value>
+                boost::is_convertible<
+                    typename dereference<Iterator>::type, Value
+                >
 
                 // We should also check whether it->m returns a reference to
                 // the member inside its pointee, but that would require
@@ -43,6 +45,14 @@ public:
                 // about this.
             >::type type;
     static bool const value = type::value;
+};
+
+//! `ReadableIterator` concept.
+struct ReadableIterator {
+    template <typename Iterator>
+    struct apply
+        : is_readable_iterator<Iterator>
+    { };
 };
 
 } // end namespace duck

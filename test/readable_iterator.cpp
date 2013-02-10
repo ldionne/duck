@@ -1,15 +1,15 @@
 /**
- * Test suite for the @em ReadableIterator concept.
+ * Test suite for the `ReadableIterator` concept.
  */
 
 #include <duck/readable_iterator.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 #include <vector>
 
 
-#define ASSERT_RI(T) ASSERT_MODELS(duck::ReadableIterator, T)
-#define ASSERT_NOT_RI(T) ASSERT_NOT_MODELS(duck::ReadableIterator, T)
+#define ASSERT_RI(T) BOOST_MPL_ASSERT((duck::is_readable_iterator<T>))
+#define ASSERT_NOT_RI(T) BOOST_MPL_ASSERT_NOT((duck::is_readable_iterator<T>))
 
 // Test with primitive types.
 ASSERT_NOT_RI(int);
