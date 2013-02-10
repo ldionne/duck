@@ -1,5 +1,5 @@
 /**
- * This file defines the @em WriteableIterator concept.
+ * This file defines the `WriteableIterator` concept.
  */
 
 #ifndef DUCK_WRITEABLE_ITERATOR_HPP
@@ -15,23 +15,39 @@
 
 namespace duck {
 
+namespace writeable_detail {
+    template <typename Iterator>
+    struct default_value {
+        typedef typename detail::iterator_traits<Iterator>::value_type type;
+    };
+}
+
 /**
- * Metafunction returning whether @em It models the @em WriteableIterator
- * concept.
+ * Metafunction returning whether an `Iterator` models the
+ * `WriteableIterator` concept.
  */
-template <typename It,
-          typename Value = typename detail::iterator_traits<It>::value_type>
-class WriteableIterator {
+template <typename Iterator, typename Value =
+                    typename writeable_detail::default_value<Iterator>::type>
+class is_writeable_iterator {
     DUCK_I_TEST_EXPRESSION(assign_deref,
                            *boost::declval<I>() = boost::declval<V>(),
                            typename I, typename V);
 
 public:
     typedef typename boost::mpl::and_<
-                CopyConstructible<It>,
-                detail::is_valid<typename assign_deref<It, Value>::type>
+                CopyConstructible<Iterator>,
+                detail::is_valid<typename assign_deref<Iterator, Value>::type>
             >::type type;
     static bool const value = type::value;
+};
+
+//! `WriteableIterator` concept.
+struct WriteableIterator {
+    template <typename Iterator, typename Value =
+                    typename writeable_detail::default_value<Iterator>::type>
+    struct apply
+        : is_writeable_iterator<Iterator, Value>
+    { };
 };
 
 } // end namespace duck

@@ -1,15 +1,18 @@
 /**
- * Test suite for the @em WriteableIterator concept.
+ * Test suite for the `WriteableIterator` concept.
  */
 
 #include <duck/writeable_iterator.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 #include <vector>
 
 
-#define ASSERT_WI(It, T) ASSERT_MODELS(duck::WriteableIterator, It, T)
-#define ASSERT_NOT_WI(It, T) ASSERT_NOT_MODELS(duck::WriteableIterator, It, T)
+#define ASSERT_WI(It, T) \
+    BOOST_MPL_ASSERT((duck::is_writeable_iterator<It, T>))
+
+#define ASSERT_NOT_WI(It, T) \
+    BOOST_MPL_ASSERT_NOT((duck::is_writeable_iterator<It, T>))
 
 // Test with primitive types.
 ASSERT_NOT_WI(int, int);

@@ -96,7 +96,7 @@ public:
                 >::type,
 
                 typename boost::mpl::if_<
-                    typename WriteableIterator<Iterator, Value>::type,
+                    is_writeable_iterator<Iterator, Value>,
                     boost::is_convertible<
                         typename subscript_assign<
                             Iterator, Difference, Value
