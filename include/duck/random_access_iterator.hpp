@@ -1,5 +1,5 @@
 /**
- * This file defines the @em RandomAccessIterator concept.
+ * This file defines the `RandomAccessIterator` concept.
  */
 
 #ifndef DUCK_RANDOM_ACCESS_ITERATOR_HPP
@@ -9,6 +9,7 @@
 #include <duck/comparable.hpp>
 #include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
+#include <duck/models.hpp>
 #include <duck/readable_iterator.hpp>
 #include <duck/writeable_iterator.hpp>
 
@@ -22,12 +23,9 @@
 
 namespace duck {
 
-/**
- * Metafunction returning whether @em It models the @em RandomAccessIterator
- * concept.
- */
-template <typename It>
-class RandomAccessIterator {
+namespace random_access_detail {
+template <typename Iterator>
+class is_random_access_iterator_impl {
     DUCK_I_TEST_EXPRESSION(iadd, boost::declval<I&>() += boost::declval<N>(),
                                                     typename I, typename N);
     DUCK_I_TEST_EXPRESSION(add, boost::declval<A>() + boost::declval<B>(),
@@ -48,13 +46,13 @@ class RandomAccessIterator {
     DUCK_I_TEST_TYPE(difference_type_,
             typename detail::iterator_traits<I>::difference_type, typename I);
 
-    typedef typename value_type_<It>::type Value;
-    typedef typename difference_type_<It>::type Difference;
+    typedef typename value_type_<Iterator>::type Value;
+    typedef typename difference_type_<Iterator>::type Difference;
 
 public:
     typedef typename boost::mpl::and_<
-                BidirectionalIterator<It>,
-                Comparable<It>,
+                BidirectionalIterator<Iterator>,
+                Comparable<Iterator>,
 
                 detail::is_valid<Value>,
                 detail::is_valid<Difference>,
@@ -62,44 +60,47 @@ public:
                 boost::mpl::and_<
 
                 boost::is_convertible<
-                    typename iadd<It, Difference>::type,
-                    typename boost::add_lvalue_reference<It>::type
+                    typename iadd<Iterator, Difference>::type,
+                    typename boost::add_lvalue_reference<Iterator>::type
                 >,
 
                 boost::is_convertible<
-                    typename add<It, Difference>::type, It
+                    typename add<Iterator, Difference>::type, Iterator
                 >,
 
                 boost::is_convertible<
-                    typename add<Difference, It>::type, It
+                    typename add<Difference, Iterator>::type, Iterator
                 >,
 
                 boost::is_convertible<
-                    typename isub<It, Difference>::type,
-                    typename boost::add_lvalue_reference<It>::type
+                    typename isub<Iterator, Difference>::type,
+                    typename boost::add_lvalue_reference<Iterator>::type
                 >,
 
                 boost::mpl::and_<
 
                 boost::is_convertible<
-                    typename sub<It, Difference>::type, It
+                    typename sub<Iterator, Difference>::type, Iterator
                 >,
 
                 boost::is_convertible<
-                    typename sub<It, It>::type, Difference
+                    typename sub<Iterator, Iterator>::type, Difference
                 >,
 
-                typename boost::mpl::if_<typename ReadableIterator<It>::type,
+                typename boost::mpl::if_<
+                    typename ReadableIterator<Iterator>::type,
                     boost::is_convertible<
-                        typename subscript<It, Difference>::type, Value
+                        typename subscript<Iterator, Difference>::type, Value
                     >,
                     boost::mpl::true_
                 >::type,
 
                 typename boost::mpl::if_<
-                    typename WriteableIterator<It, Value>::type,
+                    typename WriteableIterator<Iterator, Value>::type,
                     boost::is_convertible<
-                        typename subscript_assign<It, Difference, Value>::type,
+                        typename subscript_assign<
+                            Iterator, Difference, Value
+                        >::type,
                         Value
                     >,
                     boost::mpl::true_
@@ -110,6 +111,24 @@ public:
             >::type type;
     static bool const value = type::value;
 };
+} // end namespace random_access_detail
+
+//! `RandomAccessIterator` concept.
+struct RandomAccessIterator {
+    template <typename Iterator>
+    struct apply
+        : random_access_detail::is_random_access_iterator_impl<Iterator>
+    { };
+};
+
+/**
+ * Metafunction returning whether an `Iterator` models the
+ * `RandomAccessIterator` concept.
+ */
+template <typename Iterator>
+struct is_random_access_iterator
+    : models<RandomAccessIterator, Iterator>
+{ };
 
 } // end namespace duck
 
