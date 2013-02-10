@@ -1,8 +1,9 @@
 /**
- * Test suite for the concept-based overloading experiment.
+ * Test suite for the `requires` metafunction and related concept-based
+ * overloaded facilities.
  */
 
-#include <duck/concept_overload.hpp>
+#include <duck/requires.hpp>
 
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/mpl/bool.hpp>

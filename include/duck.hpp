@@ -16,9 +16,11 @@
 #include <duck/incrementable_iterator.hpp>
 #include <duck/less_than_comparable.hpp>
 #include <duck/lvalue_iterator.hpp>
+#include <duck/models.hpp>
 #include <duck/null_archetype.hpp>
 #include <duck/random_access_iterator.hpp>
 #include <duck/readable_iterator.hpp>
+#include <duck/requires.hpp>
 #include <duck/single_pass_iterator.hpp>
 #include <duck/swappable_iterator.hpp>
 #include <duck/writeable_iterator.hpp>
