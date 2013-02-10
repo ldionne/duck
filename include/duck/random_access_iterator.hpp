@@ -12,8 +12,9 @@
 #include <duck/readable_iterator.hpp>
 #include <duck/writeable_iterator.hpp>
 
-#include <mpl11/and.hpp>
-#include <mpl11/if.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/if.hpp>
 #include <type_traits>
 #include <utility>
 
@@ -51,12 +52,14 @@ class RandomAccessIterator {
 
 public:
     using type =
-        typename mpl11::and_<
+        typename boost::mpl::and_<
             BidirectionalIterator<It>,
             Comparable<It>,
 
             detail::is_valid<Value>,
             detail::is_valid<Difference>,
+
+            boost::mpl::and_<
 
             std::is_convertible<
                 typename iadd<It, Difference>::type,
@@ -76,6 +79,8 @@ public:
                 typename std::add_lvalue_reference<It>::type
             >,
 
+            boost::mpl::and_<
+
             std::is_convertible<
                 typename sub<It, Difference>::type, It
             >,
@@ -84,22 +89,25 @@ public:
                 typename sub<It, It>::type, Difference
             >,
 
-            typename mpl11::if_<typename ReadableIterator<It>::type,
+            typename boost::mpl::if_<typename ReadableIterator<It>::type,
                 std::is_convertible<
                     typename subscript<It, Difference>::type, Value
                 >,
-                std::true_type
+                boost::mpl::true_
             >::type,
 
-            typename mpl11::if_<typename WriteableIterator<It, Value>::type,
+            typename boost::mpl::if_<typename WriteableIterator<It, Value>::type,
                 std::is_convertible<
                     typename subscript_assign<It, Difference, Value>::type,
                     Value
                 >,
-                std::true_type
+                boost::mpl::true_
             >::type
+
+            > // mpl::and_
+            > // mpl::and_
         >::type;
-    static auto const value = type::value;
+    static bool const value = type::value;
 };
 
 } // end namespace duck

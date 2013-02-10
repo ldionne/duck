@@ -8,6 +8,8 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 endif()
 
 include_directories(include)
-include_directories(${duck_SOURCE_DIR}/ext/mpl11/include)
+
+find_package(Boost 1.51 REQUIRED)
+include_directories(${Boost_INCLUDE_DIR})
 
 add_subdirectory(test)

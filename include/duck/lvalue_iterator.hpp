@@ -8,7 +8,7 @@
 #include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
 
-#include <mpl11/and.hpp>
+#include <boost/mpl/and.hpp>
 #include <type_traits>
 #include <utility>
 
@@ -29,7 +29,7 @@ class LvalueIterator {
 
 public:
     using type =
-        typename mpl11::and_<
+        typename boost::mpl::and_<
             detail::is_valid<Value>,
             std::is_convertible<
                 typename dereference<It, Value>::type,

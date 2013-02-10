@@ -10,8 +10,8 @@
 #include <duck/detail/test_expression.hpp>
 
 #include <algorithm>
-#include <mpl11/and.hpp>
-#include <mpl11/or.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/or.hpp>
 #include <utility>
 
 
@@ -41,9 +41,9 @@ class SwappableIterator {
         using Dereference = typename dereference<I>::type;
         // dereferenceable && (has adl swap || is assignable)
         using type =
-            typename mpl11::and_<
+            typename boost::mpl::and_<
                 detail::is_valid<Dereference>,
-                mpl11::or_<
+                boost::mpl::or_<
                     detail::is_valid<typename swap_adl<Dereference>::type>,
                     Assignable<Dereference>
                 >
@@ -52,14 +52,14 @@ class SwappableIterator {
 
 public:
     using type =
-        typename mpl11::and_<
+        typename boost::mpl::and_<
             CopyConstructible<It>,
-            mpl11::or_<
+            boost::mpl::or_<
                 detail::is_valid<typename iter_swap_adl<It>::type>,
                 std_iter_swap_is_valid<It>
             >
         >::type;
-    static auto const value = type::value;
+    static bool const value = type::value;
 };
 
 } // end namespace duck

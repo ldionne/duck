@@ -8,7 +8,7 @@
 #include <duck/equality_comparable.hpp>
 #include <duck/incrementable_iterator.hpp>
 
-#include <mpl11/and.hpp>
+#include <boost/mpl/and.hpp>
 
 
 namespace duck {
@@ -19,7 +19,7 @@ namespace duck {
  */
 template <typename It>
 struct SinglePassIterator
-    : mpl11::and_<
+    : boost::mpl::and_<
         EqualityComparable<It>,
         IncrementableIterator<It>
     >

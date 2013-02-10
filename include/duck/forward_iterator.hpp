@@ -10,7 +10,7 @@
 #include <duck/detail/test_expression.hpp>
 #include <duck/single_pass_iterator.hpp>
 
-#include <mpl11/and.hpp>
+#include <boost/mpl/and.hpp>
 #include <type_traits>
 
 
@@ -28,14 +28,14 @@ class ForwardIterator {
 
 public:
     using type =
-        typename mpl11::and_<
+        typename boost::mpl::and_<
             DefaultConstructible<It>,
             SinglePassIterator<It>,
             detail::is_valid<Difference>,
             std::is_integral<Difference>,
             std::is_signed<Difference>
         >::type;
-    static auto const value = type::value;
+    static bool const value = type::value;
 };
 
 } // end namespace duck

@@ -7,7 +7,7 @@
 
 #include <duck/detail/test_expression.hpp>
 
-#include <mpl11/and.hpp>
+#include <boost/mpl/and.hpp>
 #include <type_traits>
 #include <utility>
 
@@ -27,11 +27,11 @@ class EqualityComparable {
 
 public:
     using type =
-        typename mpl11::and_<
+        typename boost::mpl::and_<
             std::is_convertible<typename equal<T, T>::type, bool>,
             std::is_convertible<typename not_equal<T, T>::type, bool>
         >::type;
-    static auto const value = type::value;
+    static bool const value = type::value;
 };
 
 } // end namespace duck

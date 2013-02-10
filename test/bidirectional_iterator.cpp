@@ -4,29 +4,26 @@
 
 #include <duck/bidirectional_iterator.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 #include <vector>
 
 
-#define ASSERT_BI(T) ASSERT_MODELS(duck::BidirectionalIterator, T)
-#define ASSERT_NOT_BI(T) ASSERT_NOT_MODELS(duck::BidirectionalIterator, T)
-
 // Test with primitive types.
-ASSERT_NOT_BI(int);
-ASSERT_NOT_BI(int&);
-ASSERT_BI(int*);
-ASSERT_BI(int const*);
-ASSERT_NOT_BI(int const);
-ASSERT_NOT_BI(int const&);
-ASSERT_NOT_BI(int* const);
-ASSERT_NOT_BI(int&&);
-ASSERT_NOT_BI(int const&&);
+BOOST_MPL_ASSERT_NOT((duck::BidirectionalIterator<int>));
+BOOST_MPL_ASSERT_NOT((duck::BidirectionalIterator<int&>));
+BOOST_MPL_ASSERT((duck::BidirectionalIterator<int*>));
+BOOST_MPL_ASSERT((duck::BidirectionalIterator<int const*>));
+BOOST_MPL_ASSERT_NOT((duck::BidirectionalIterator<int const>));
+BOOST_MPL_ASSERT_NOT((duck::BidirectionalIterator<int const&>));
+BOOST_MPL_ASSERT_NOT((duck::BidirectionalIterator<int* const>));
+BOOST_MPL_ASSERT_NOT((duck::BidirectionalIterator<int&&>));
+BOOST_MPL_ASSERT_NOT((duck::BidirectionalIterator<int const&&>));
 
 // Test with a sample iterator.
-ASSERT_BI(std::vector<int>::iterator);
+BOOST_MPL_ASSERT((duck::BidirectionalIterator<std::vector<int>::iterator>));
 
 // Test with a type that lacks only one of the decrement operator.
 struct no_decrement : std::vector<int>::iterator {
     no_decrement& operator--() = delete;
 };
-ASSERT_NOT_BI(no_decrement);
+BOOST_MPL_ASSERT_NOT((duck::BidirectionalIterator<no_decrement>));

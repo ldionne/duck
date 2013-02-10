@@ -5,9 +5,10 @@
 #ifndef DUCK_DETAIL_TEST_EXPRESSION_HPP
 #define DUCK_DETAIL_TEST_EXPRESSION_HPP
 
-#include <mpl11/eval_if.hpp>
-#include <mpl11/identity.hpp>
-#include <mpl11/not.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/not.hpp>
 #include <type_traits>
 #include <utility>
 
@@ -21,7 +22,7 @@ namespace duck {
         * if it is not the same as `duck::detail::invalid`.
         */
        template <typename T>
-       struct is_valid : mpl11::not_<std::is_same<T, invalid>> { };
+       struct is_valid : boost::mpl::not_<std::is_same<T, invalid>> { };
     }
 }
 
@@ -37,11 +38,11 @@ template <typename ...DUCK_I_UNIQUE(Args)>                                  \
 class name {                                                                \
     template <__VA_ARGS__> static                                           \
     /* void() is used to make sure no user-defined comma operator is used */\
-    decltype((as_expression), void(), ::std::true_type())                   \
+    decltype((as_expression), void(), ::boost::mpl::true_())                \
     test_validity(int);                                                     \
                                                                             \
     template <__VA_ARGS__> static                                           \
-    ::std::false_type test_validity(...);                                   \
+    ::boost::mpl::false_ test_validity(...);                                \
                                                                             \
     template <__VA_ARGS__>                                                  \
     struct delayed_type {                                                   \
@@ -52,9 +53,9 @@ class name {                                                                \
                                                                             \
 public:                                                                     \
     using type =                                                            \
-        typename ::mpl11::eval_if<is_valid,                                 \
+        typename ::boost::mpl::eval_if<is_valid,                            \
             delayed_type<DUCK_I_UNIQUE(Args)...>,                           \
-            ::mpl11::identity<::duck::detail::invalid>                      \
+            ::boost::mpl::identity<::duck::detail::invalid>                 \
         >::type;                                                            \
 }                                                                           \
 /**/

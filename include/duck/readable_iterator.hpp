@@ -10,7 +10,7 @@
 #include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
 
-#include <mpl11/and.hpp>
+#include <boost/mpl/and.hpp>
 #include <type_traits>
 #include <utility>
 
@@ -30,7 +30,7 @@ class ReadableIterator {
 
 public:
     using type =
-        typename mpl11::and_<
+        typename boost::mpl::and_<
             Assignable<It>,
             CopyConstructible<It>,
 
@@ -43,7 +43,7 @@ public:
             // non class-or-struct types don't care about this.
 
         >::type;
-    static auto const value = type::value;
+    static bool const value = type::value;
 };
 
 } // end namespace duck

@@ -5,9 +5,15 @@
 #ifndef DUCK_ASSIGNABLE_HPP
 #define DUCK_ASSIGNABLE_HPP
 
-#include <mpl11/eval_if.hpp>
-#include <type_traits>
-#include <utility>
+#include <duck/detail/test_expression.hpp>
+
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/type_traits/add_const.hpp>
+#include <boost/type_traits/add_lvalue_reference.hpp>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/utility/declval.hpp>
 
 
 namespace duck {
@@ -17,27 +23,33 @@ namespace duck {
  */
 template <typename T>
 class Assignable {
-    using Tgt = typename std::add_lvalue_reference<T>::type;
-    using Src = typename std::add_lvalue_reference<
-                    typename std::add_const<
-                        typename std::remove_reference<T>::type>::type>::type;
+    DUCK_I_TEST_EXPRESSION(assignment,
+                           boost::declval<Tgt>() = boost::declval<Src>(),
+                           typename Tgt, typename Src);
 
-    template <typename ...>
+    using Tgt = typename boost::add_lvalue_reference<T>::type;
+    using Src = typename boost::add_lvalue_reference<
+                    typename boost::add_const<
+                        typename boost::remove_reference<T>::type
+                    >::type
+                >::type;
+
+    template <typename Tgt, typename Src>
     struct continue_concept
         : std::is_convertible<
-            decltype(std::declval<Tgt>() = std::declval<Src>()),
-            typename std::add_lvalue_reference<T>::type
+            decltype(boost::declval<Tgt>() = boost::declval<Src>()),
+            typename boost::add_lvalue_reference<T>::type
         >
     { };
 
 public:
     using type =
-        typename mpl11::eval_if<
-            typename std::is_assignable<Tgt, Src>::type,
-            continue_concept<>,
-            std::false_type
+        typename boost::mpl::eval_if<
+            detail::is_valid<typename assignment<Tgt, Src>::type>,
+            continue_concept<Tgt, Src>,
+            boost::mpl::false_
         >::type;
-    static auto const value = type::value;
+    static bool const value = type::value;
 };
 
 } // end namespace duck
