@@ -70,6 +70,7 @@ namespace duck {
 
 
 struct distance_tag;
+
 namespace duck {
     template <typename VisitedConcepts>
     struct result_of_call<distance_tag, VisitedConcepts> {
@@ -86,53 +87,30 @@ namespace duck {
 duck::concept_based_overload_resolution_failed distance(...);
 
 
-// Possibilité d'avoir un OverloadInfo qui default à la family?
-// Ça pourrait faciliter l'utilisation.
-
-template <typename Iterator, typename VisitedConcepts = duck::no_concepts>
+template <typename Iterator, typename State = duck::overload_resolution<distance_tag> >
 typename duck::requires<
     duck::model_of<RandomAccessTraversal, Iterator>
     // possibly other requirements
 
-  , duck::visited_concepts<VisitedConcepts>
-  , duck::overload_family<distance_tag>
+  , duck::overload_resolution_state<State>
+  , duck::template_parameters<Iterator>
+
 , std::size_t>::type
-distance(Iterator first, Iterator last, VisitedConcepts = VisitedConcepts()) {
-
-}
-
-
-template <typename Concept, typename Model, typename Family, typename VisitedConcepts>
-struct requires
-    : boost::enable_if<
-        duck::should_pick_this_overload_for<
-            Model,
-        >
-    >
-{ };
-
-template <typename Iterator, typename VisitedConcepts = duck::no_concepts>
-typename boost::enable_if<
-    boost::mpl::apply<
-        duck::should_pick_this_overload_for<
-            Iterator, distance_tag, RandomAccessTraversal, VisitedConcepts
-        >,
-        Iterator
-    >,
-std::size_t>::type distance(Iterator first, Iterator last, VisitedConcepts = VisitedConcepts()) {
+distance(Iterator first, Iterator last, State = State()) {
     std::cout << "random_access\n";
     return last - first;
 }
 
-template <typename Iterator, typename VisitedConcepts = duck::no_concepts>
-typename boost::enable_if<
-    boost::mpl::apply<
-        duck::should_pick_this_overload_for<
-            Iterator, distance_tag, ForwardTraversal, VisitedConcepts
-        >,
-        Iterator
-    >,
-std::size_t>::type distance(Iterator first, Iterator last, VisitedConcepts = VisitedConcepts()) {
+template <typename Iterator, typename State = duck::overload_resolution<distance_tag> >
+typename duck::requires<
+    duck::model_of<ForwardTraversal, Iterator>
+    // possibly other requirements
+
+  , duck::overload_resolution_state<State>
+  , duck::template_parameters<Iterator>
+
+, std::size_t>::type
+distance(Iterator first, Iterator last, State = State()) {
     std::cout << "forward_traversal\n";
     std::size_t dist = 0;
     while (first != last)
@@ -140,50 +118,56 @@ std::size_t>::type distance(Iterator first, Iterator last, VisitedConcepts = Vis
     return dist;
 }
 
+
+struct my_zero_dist_iterator { };
+namespace boost {
+    template <>
+    struct iterator_traversal<my_zero_dist_iterator> {
+        typedef void type;
+    };
+}
+
+struct ZeroDistIterator {
+    template <typename Iterator>
+    struct apply
+        : boost::is_same<
+            Iterator,
+            my_zero_dist_iterator
+        >
+    { };
+};
+
+namespace duck {
+    template <typename T>
+    struct is_more_specific_than<ZeroDistIterator, T>
+        : boost::mpl::false_
+    { };
+
+    template <typename T>
+    struct is_more_specific_than<T, ZeroDistIterator>
+        : boost::mpl::true_
+    { };
+}
+
+template <typename Iterator, typename State = duck::overload_resolution<distance_tag> >
+typename duck::requires<
+    duck::model_of<ZeroDistIterator, Iterator>
+    // possibly other requirements
+
+  , duck::overload_resolution_state<State>
+  , duck::template_parameters<Iterator>
+
+, std::size_t>::type
+distance(Iterator first, Iterator last, State = State()) {
+    std::cout << "zero_dist\n";
+    return 0;
+}
+
 static void foo() {
     int* i = 0;
     int* j = 0;
     std::size_t dist = distance(i, j);
-    distance(0, 1);
+
+    my_zero_dist_iterator first, last;
+    std::size_t zero = distance(first, last);
 }
-
-
-
-// struct my_zero_dist_iterator { };
-// namespace boost {
-//     template <>
-//     struct iterator_traversal<my_zero_dist_iterator> {
-//         typedef void type;
-//     };
-// }
-
-// struct ZeroDistIterator {
-//     template <typename Iterator>
-//     struct apply
-//         : boost::is_same<
-//             Iterator,
-//             my_zero_dist_iterator
-//         >
-//     { };
-// };
-
-// template <typename T>
-// struct is_more_specific_than<ZeroDistIterator, T>
-//     : boost::mpl::false_
-// { };
-
-// template <typename T>
-// struct is_more_specific_than<T, ZeroDistIterator>
-//     : boost::mpl::true_
-// { };
-
-// template <typename Iterator, typename VisitedConcepts = no_concepts>
-// typename boost::enable_if<
-//     boost::mpl::and_<
-//         is_best_so_far<Iterator, ZeroDistIterator, VisitedConcepts>,
-//         distance_has_no_better_overload<Iterator, ZeroDistIterator, VisitedConcepts>
-//     >,
-// std::size_t>::type distance(Iterator first, Iterator last, VisitedConcepts = VisitedConcepts()) {
-//     std::cout << "zero_dist\n";
-//     return 0;
-// }

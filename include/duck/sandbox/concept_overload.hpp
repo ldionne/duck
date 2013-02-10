@@ -10,12 +10,19 @@
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/apply.hpp>
 #include <boost/mpl/bool.hpp>
+#include <boost/mpl/back.hpp>
 #include <boost/mpl/contains.hpp>
+#include <boost/mpl/copy_if.hpp>
+#include <boost/mpl/deref.hpp>
+#include <boost/mpl/find_if.hpp>
 #include <boost/mpl/not.hpp>
 #include <boost/mpl/placeholders.hpp>
+#include <boost/mpl/pop_back.hpp>
 #include <boost/mpl/push_front.hpp>
+#include <boost/mpl/quote.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
 
 
 namespace duck {
@@ -30,28 +37,19 @@ namespace duck {
  */
 struct concept_based_overload_resolution_failed;
 
+//! Compile-time data structure storing state during an overload resolution.
+template <typename Family, typename VisitedConcepts = boost::mpl::vector<> >
+struct overload_resolution {
+    typedef VisitedConcepts visited_concepts;
+    typedef Family family;
+
+    typedef overload_resolution type; // to make it a metafunction
+};
+
 //! Metafunction returning whether a `Type` is a model of a given `Concept`.
 template <typename Concept, typename Type>
 struct models
     : boost::mpl::apply<Concept, Type>
-{ };
-
-/**
- * Add a `Concept` to a list of concepts visited during the overload
- * resolution.
- */
-template <typename Concept, typename VisitedConcepts>
-struct mark_as_visited
-    : boost::mpl::push_front<VisitedConcepts, Concept>
-{ };
-
-/**
- * Metafunction returning whether a `Concept` has already been visited during
- * the overload resolution.
- */
-template <typename Concept, typename VisitedConcepts>
-struct has_visited
-    : boost::mpl::contains<VisitedConcepts, Concept>
 { };
 
 /**
@@ -76,111 +74,233 @@ struct is_more_specific_than<Concept, Concept>
 { };
 
 /**
- * Metafunction returning whether a `Concept` is the most specific in a list
- * of visited concepts.
+ * Metafunction class returning the result of calling the function overloaded
+ * by `Family` at the current stage of the overload resolution.
+ *
+ * @note This metafunction class must be specialized by each family of
+ *       overload.
  */
-template <typename Concept, typename VisitedConcepts>
-struct is_most_specific
+template <typename Family, typename OverloadResolution>
+struct result_of_call;
+
+namespace concept_overload_detail {
+/**
+ * Add a `Concept` to the list of concepts visited during the current
+ * overload resolution.
+ */
+template <typename Concept, typename OverloadResolution>
+struct mark_as_visited
+    : overload_resolution<
+        typename OverloadResolution::family,
+        typename boost::mpl::push_front<
+            typename OverloadResolution::visited_concepts, Concept
+        >::type
+    >
+{ };
+
+/**
+ * Metafunction returning whether a `Concept` has already been visited during
+ * the current overload resolution.
+ */
+template <typename Concept, typename OverloadResolution>
+struct has_visited
+    : boost::mpl::contains<
+        typename OverloadResolution::visited_concepts, Concept
+    >
+{ };
+
+/**
+ * Metafunction returning whether a `Concept` is the most specific that was
+ * visited so far during an overload resolution.
+ */
+template <typename Concept, typename OverloadResolution>
+struct is_most_specific_so_far
     : boost::mpl::none_of<
-        VisitedConcepts, is_more_specific_than<Concept, boost::mpl::_1>
+        typename OverloadResolution::visited_concepts,
+        is_more_specific_than<Concept, boost::mpl::_1>
     >
 { };
 
 /**
  * Metafunction returning whether a `Concept` is the best match for a `Type`
- * so far according to a list of visited concepts.
+ * so far during an overload resolution.
  */
-template <typename Type, typename Concept, typename VisitedConcepts>
-struct is_best_so_far
+template <typename Type, typename Concept, typename OverloadResolution>
+struct is_best_match_so_far
     : boost::mpl::and_<
-        boost::mpl::not_<has_visited<Concept, VisitedConcepts> >,
-        is_most_specific<Concept, VisitedConcepts>,
+        boost::mpl::not_<has_visited<Concept, OverloadResolution> >,
+        is_most_specific_so_far<Concept, OverloadResolution>,
         models<Concept, Type>
     >
 { };
 
 /**
- * Metafunction class returning the result of calling the function overloaded
- * by `Family` after having visited a list of `VisitedConcepts`.
- *
- * @note This metafunction class must be specialized by each family of
- *       overloads.
+ * Metafunction class returning whether a `Concept` is the most specific
+ * concept modeled by a `Type` for which an overload exists according to
+ * the family present in `OverloadResolution`.
  */
-template <typename Family, typename VisitedConcepts>
-struct result_of_call;
-
-/**
- * Metafunction class returning whether a `Family` of overloads has no
- * overload that can be selected after a `Concept` was visited.
- */
-template <typename Family, typename Concept, typename VisitedConcepts>
-struct has_no_better_overload {
+template <typename Type, typename Concept, typename OverloadResolution>
+class clause_passes {
     template <typename ...Args>
-    struct apply
+    struct result_of_calling_the_function_with
+        : boost::mpl::apply<
+            result_of_call<
+                typename OverloadResolution::family,
+                typename mark_as_visited<Concept, OverloadResolution>::type
+            >,
+            Args...
+        >
+    { };
+
+    template <typename ...Args>
+    struct there_are_no_better_overloads
         : boost::is_same<
-            typename boost::mpl::apply<
-                result_of_call<
-                    Family,
-                    typename mark_as_visited<Concept, VisitedConcepts>::type
-                >,
-                Args...
-            >::type,
+            typename result_of_calling_the_function_with<Args...>::type,
             concept_based_overload_resolution_failed
         >
     { };
-};
 
-/**
- * Metafunction class returning whether this is the best overload available
- * with respect to a `Type` modeling a `Concept`.
- *
- * Specifically, this metafunction class is true iff `Concept` is the most
- * specific concept modeled by `Type` for which an overload in a `Family` of
- * overloads exists.
- */
-template <typename Type, typename Family,
-          typename Concept, typename VisitedConcepts>
-struct should_pick_this_overload_for {
+public:
     template <typename ...Args>
     struct apply
         : boost::mpl::and_<
-            is_best_so_far<Type, Concept, VisitedConcepts>,
-            boost::mpl::apply<
-                has_no_better_overload<Family, Concept, VisitedConcepts>,
-                Args...
-            >
+            is_best_match_so_far<Type, Concept, OverloadResolution>,
+            there_are_no_better_overloads<Args...>
         >
     { };
 };
 
-//! Type representing an empty list of visited concepts.
-typedef boost::mpl::vector<> no_concepts;
 
 //! Requires a `Type` to be a model of a `Concept` in a `require` clause.
-template <typename Concept, typename Type> struct model_of;
-
-//! Provides the `Family` of overloads to a `require` clause.
-template <typename Family> struct overload_family;
-
-/**
- * Provides the list of visited concepts during the current overload
- * resolution to a `require` clause.
- */
-template <typename VisitedConcepts> struct visited_concepts;
-
-template <typename Family, typename VisitedConcepts = boost::mpl::vector<> >
-struct overload_information {
-    typedef VisitedConcepts visited_concepts;
-    typedef Family family;
+template <typename Concept, typename Type> struct model_of {
+    typedef Concept concept;
+    typedef Type model;
 };
 
+template <typename T>
+struct is_model_of_clause
+    : boost::mpl::false_
+{ };
+
+template <typename Concept, typename Type>
+struct is_model_of_clause<model_of<Concept, Type> >
+    : boost::mpl::true_
+{ };
+
+//! Provides the current `OverloadResolution` state to a `require` clause.
+template <typename OverloadResolution>
+struct overload_resolution_state {
+    typedef OverloadResolution type;
+};
+
+template <typename T>
+struct is_overload_resolution_state
+    : boost::mpl::false_
+{ };
+
+template <typename OverloadResolution>
+struct is_overload_resolution_state<
+                            overload_resolution_state<OverloadResolution> >
+    : boost::mpl::true_
+{ };
+
 /**
+ * Provides the template parameters to pass to the next function that will be
+ * tried in the same overload family.
  *
+ * @note The overload information is handled by the library and must not be
+ *       passed here.
+ */
+template <typename ...Params> struct template_parameters;
+
+template <typename T>
+struct is_template_parameters
+    : boost::mpl::false_
+{ };
+
+template <typename ...Params>
+struct is_template_parameters<template_parameters<Params...> >
+    : boost::mpl::true_
+{ };
+
+template <typename ...Blob>
+struct requires_impl {
+    template <typename F, typename Pack> struct apply_pack;
+    template <typename F, template <typename ...> class Pack, typename ...Args>
+    struct apply_pack<F, Pack<Args...> >
+        : boost::mpl::apply<F, Args...>
+    { };
+
+    typedef typename boost::mpl::back<
+                boost::mpl::vector<Blob...>
+            >::type return_type;
+
+    typedef typename boost::mpl::pop_back<
+                boost::mpl::vector<Blob...>
+            >::type arguments;
+
+    // Gather all the model_of clauses
+    typedef typename boost::mpl::copy_if<
+                arguments, boost::mpl::quote1<is_model_of_clause>
+            >::type clauses;
+
+    // Gather the template parameters to be passed to subsequent overloads
+    typedef typename boost::mpl::deref<typename boost::mpl::find_if<
+                arguments, boost::mpl::quote1<is_template_parameters>
+            >::type>::type template_parameters;
+
+    // Fetch the current overload resolution state
+    typedef typename boost::mpl::deref<typename boost::mpl::find_if<
+                arguments, boost::mpl::quote1<is_overload_resolution_state>
+            >::type>::type::type current_state;
+
+    struct clause_is_respected {
+        template <typename Clause>
+        struct apply
+            : apply_pack<
+                clause_passes<
+                    typename Clause::model,
+                    typename Clause::concept,
+                    current_state
+                >,
+                template_parameters
+            >
+        { };
+    };
+
+    typedef typename boost::mpl::all_of<
+                clauses, clause_is_respected
+            >::type type;
+    static bool const value = type::value;
+};
+} // end namespace concept_overload_detail
+
+// Named parameters for `requires`
+using concept_overload_detail::model_of;
+using concept_overload_detail::overload_resolution_state;
+using concept_overload_detail::template_parameters;
+
+/**
+ * Metafunction to perform concept-based overloading.
+ *
+ * Examples of usage:
+ *
+ *      typename requires<
+ *                  model_of<SomeConcept, SomeType>,
+ *                  model_of<SomeOtherConcept, SomeOtherType>,
+ *
+ *                  overload_resolution_state<State>,
+ *                  template_parameters<SomeType, SomeOtherType>,
+ *                  return_type
+ *      >::type
  */
 template <typename ...Args>
-struct requires {
-
-};
+struct requires
+    : boost::enable_if<
+        concept_overload_detail::requires_impl<Args...>,
+        typename concept_overload_detail::requires_impl<Args...>::return_type
+    >
+{ };
 
 } // end namespace duck
 
