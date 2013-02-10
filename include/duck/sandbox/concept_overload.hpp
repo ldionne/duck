@@ -7,6 +7,7 @@
 
 #include <duck/detail/mpl_extensions.hpp>
 
+#include <boost/config.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/apply.hpp>
 #include <boost/mpl/back.hpp>
@@ -36,7 +37,16 @@ namespace duck {
  *
  * @note It is important that this stays an incomplete type.
  */
-struct concept_based_overload_resolution_failed;
+struct concept_based_overload_resolution_failed
+#if defined(BOOST_NO_CXX11_DECLTYPE_N3276)
+{
+    // On GCC, incomplete types can't appear inside decltype.
+    // Instead of failing on valid decltypes, we will trigger a link time
+    // error when `concept_based_overload_resolution_failed` is used.
+    ~concept_based_overload_resolution_failed();
+}
+#endif
+;
 
 //! Compile-time data structure storing state during an overload resolution.
 template <typename Family, typename VisitedConcepts = boost::mpl::vector<> >
