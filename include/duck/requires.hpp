@@ -53,12 +53,18 @@ struct concept_based_overload_resolution_failed
  * Trait that must be specialized by new concepts to specify a partial order
  * between concepts.
  *
+ * @note It is only needed to specialize one side of the trait, i.e.
+ *       `is_more_specific_than<A, B> : true` does not require the definition
+ *       of `is_more_specific_than<B, A> : false` too.
+ *
  * @note `is_more_specific_than<A, B>` is conceptually equivalent to `A < B`
  *       where the `<` operator is a partial order meaning `A` is less
  *       specific than `B`.
  */
 template <typename A, typename B>
-struct is_more_specific_than;
+struct is_more_specific_than
+    : boost::mpl::not_<is_more_specific_than<B, A> >
+{ };
 
 /**
  * Specialization of the `is_more_specific_than` trait for the trivial case
