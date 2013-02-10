@@ -8,10 +8,10 @@
 #include <duck/default_constructible.hpp>
 #include <duck/destructible.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 
 
-ASSERT_NOT_MODELS(duck::Assignable, duck::null_archetype);
-ASSERT_NOT_MODELS(duck::CopyConstructible, duck::null_archetype);
-ASSERT_NOT_MODELS(duck::DefaultConstructible, duck::null_archetype);
-ASSERT_NOT_MODELS(duck::Destructible, duck::null_archetype);
+BOOST_MPL_ASSERT_NOT((duck::Assignable<duck::null_archetype>));
+BOOST_MPL_ASSERT_NOT((duck::CopyConstructible<duck::null_archetype>));
+BOOST_MPL_ASSERT_NOT((duck::DefaultConstructible<duck::null_archetype>));
+BOOST_MPL_ASSERT_NOT((duck::Destructible<duck::null_archetype>));

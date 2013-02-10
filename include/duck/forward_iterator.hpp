@@ -11,7 +11,8 @@
 #include <duck/single_pass_iterator.hpp>
 
 #include <boost/mpl/and.hpp>
-#include <type_traits>
+#include <boost/type_traits/is_integral.hpp>
+#include <boost/type_traits/is_signed.hpp>
 
 
 namespace duck {
@@ -24,17 +25,16 @@ template <typename It>
 class ForwardIterator {
     DUCK_I_TEST_TYPE(difference_type_,
             typename detail::iterator_traits<I>::difference_type, typename I);
-    using Difference = typename difference_type_<It>::type;
+    typedef typename difference_type_<It>::type Difference;
 
 public:
-    using type =
-        typename boost::mpl::and_<
-            DefaultConstructible<It>,
-            SinglePassIterator<It>,
-            detail::is_valid<Difference>,
-            std::is_integral<Difference>,
-            std::is_signed<Difference>
-        >::type;
+    typedef typename boost::mpl::and_<
+                DefaultConstructible<It>,
+                SinglePassIterator<It>,
+                detail::is_valid<Difference>,
+                boost::is_integral<Difference>,
+                boost::is_signed<Difference>
+            >::type type;
     static bool const value = type::value;
 };
 

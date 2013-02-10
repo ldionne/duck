@@ -8,8 +8,8 @@
 #include <duck/detail/test_expression.hpp>
 
 #include <boost/mpl/and.hpp>
-#include <type_traits>
-#include <utility>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/utility/declval.hpp>
 
 
 namespace duck {
@@ -20,17 +20,16 @@ namespace duck {
  */
 template <typename T>
 class EqualityComparable {
-    DUCK_I_TEST_EXPRESSION(equal, std::declval<U>() == std::declval<V>(),
+    DUCK_I_TEST_EXPRESSION(equal, boost::declval<U>() == boost::declval<V>(),
                                                     typename U, typename V);
-    DUCK_I_TEST_EXPRESSION(not_equal, std::declval<U>() != std::declval<V>(),
-                                                    typename U, typename V);
+    DUCK_I_TEST_EXPRESSION(not_equal,
+        boost::declval<U>() != boost::declval<V>(), typename U, typename V);
 
 public:
-    using type =
-        typename boost::mpl::and_<
-            std::is_convertible<typename equal<T, T>::type, bool>,
-            std::is_convertible<typename not_equal<T, T>::type, bool>
-        >::type;
+    typedef typename boost::mpl::and_<
+                boost::is_convertible<typename equal<T, T>::type, bool>,
+                boost::is_convertible<typename not_equal<T, T>::type, bool>
+            >::type type;
     static bool const value = type::value;
 };
 

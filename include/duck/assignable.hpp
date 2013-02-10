@@ -27,28 +27,27 @@ class Assignable {
                            boost::declval<Tgt>() = boost::declval<Src>(),
                            typename Tgt, typename Src);
 
-    using Tgt = typename boost::add_lvalue_reference<T>::type;
-    using Src = typename boost::add_lvalue_reference<
-                    typename boost::add_const<
-                        typename boost::remove_reference<T>::type
-                    >::type
-                >::type;
+    typedef typename boost::add_lvalue_reference<T>::type Tgt;
+    typedef typename boost::add_lvalue_reference<
+                typename boost::add_const<
+                    typename boost::remove_reference<T>::type
+                >::type
+            >::type Src;
 
     template <typename Tgt, typename Src>
     struct continue_concept
-        : std::is_convertible<
+        : boost::is_convertible<
             decltype(boost::declval<Tgt>() = boost::declval<Src>()),
             typename boost::add_lvalue_reference<T>::type
         >
     { };
 
 public:
-    using type =
-        typename boost::mpl::eval_if<
-            detail::is_valid<typename assignment<Tgt, Src>::type>,
-            continue_concept<Tgt, Src>,
-            boost::mpl::false_
-        >::type;
+    typedef typename boost::mpl::eval_if<
+                detail::is_valid<typename assignment<Tgt, Src>::type>,
+                continue_concept<Tgt, Src>,
+                boost::mpl::false_
+            >::type type;
     static bool const value = type::value;
 };
 

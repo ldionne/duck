@@ -10,8 +10,10 @@
 #include <duck/detail/test_expression.hpp>
 
 #include <boost/mpl/and.hpp>
-#include <type_traits>
-#include <utility>
+#include <boost/type_traits/add_lvalue_reference.hpp>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/utility/declval.hpp>
 
 
 namespace duck {
@@ -22,26 +24,24 @@ namespace duck {
  */
 template <typename It>
 class IncrementableIterator {
-    DUCK_I_TEST_EXPRESSION(pre_increment, ++std::declval<I&>(), typename I);
-    DUCK_I_TEST_EXPRESSION(post_increment, std::declval<I&>()++, typename I);
+    DUCK_I_TEST_EXPRESSION(pre_increment, ++boost::declval<I&>(), typename I);
+    DUCK_I_TEST_EXPRESSION(post_increment, boost::declval<I&>()++, typename I);
 
 public:
-    using type =
-        typename boost::mpl::and_<
-            Assignable<It>,
-            CopyConstructible<It>,
+    typedef typename boost::mpl::and_<
+                Assignable<It>,
+                CopyConstructible<It>,
 
-            std::is_convertible<
-                typename pre_increment<It>::type,
-                typename std::add_lvalue_reference<It>::type
-            >,
+                boost::is_convertible<
+                    typename pre_increment<It>::type,
+                    typename boost::add_lvalue_reference<It>::type
+                >,
 
-            std::is_convertible<
-                typename post_increment<It>::type,
-                typename std::remove_reference<It>::type
-            >
-
-        >::type;
+                boost::is_convertible<
+                    typename post_increment<It>::type,
+                    typename boost::remove_reference<It>::type
+                >
+            >::type type;
     static bool const value = type::value;
 };
 

@@ -10,12 +10,12 @@ namespace duck {
 /**
  * Archetype that models no concept.
  */
-struct null_archetype {
-    null_archetype() = delete;
-    null_archetype(null_archetype const&) = delete;
-    null_archetype(null_archetype&&) = delete;
-    null_archetype& operator=(null_archetype const&) = delete;
-    ~null_archetype() = delete;
+class null_archetype {
+    null_archetype() /*= delete*/;
+    null_archetype(null_archetype const&) /*= delete*/;
+    null_archetype(null_archetype&&) /*= delete*/;
+    null_archetype& operator=(null_archetype const&) /*= delete*/;
+    ~null_archetype() /*= delete*/;
 };
 
 } // end namespace duck

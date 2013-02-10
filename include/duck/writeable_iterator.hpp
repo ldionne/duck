@@ -10,7 +10,7 @@
 #include <duck/detail/test_expression.hpp>
 
 #include <boost/mpl/and.hpp>
-#include <utility>
+#include <boost/utility/declval.hpp>
 
 
 namespace duck {
@@ -23,14 +23,14 @@ template <typename It,
           typename Value = typename detail::iterator_traits<It>::value_type>
 class WriteableIterator {
     DUCK_I_TEST_EXPRESSION(assign_deref,
-            *std::declval<I>() = std::declval<V>(), typename I, typename V);
+                           *boost::declval<I>() = boost::declval<V>(),
+                           typename I, typename V);
 
 public:
-    using type =
-        typename boost::mpl::and_<
-            CopyConstructible<It>,
-            detail::is_valid<typename assign_deref<It, Value>::type>
-        >::type;
+    typedef typename boost::mpl::and_<
+                CopyConstructible<It>,
+                detail::is_valid<typename assign_deref<It, Value>::type>
+            >::type type;
     static bool const value = type::value;
 };
 

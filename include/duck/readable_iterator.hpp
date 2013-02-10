@@ -11,8 +11,8 @@
 #include <duck/detail/test_expression.hpp>
 
 #include <boost/mpl/and.hpp>
-#include <type_traits>
-#include <utility>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/utility/declval.hpp>
 
 
 namespace duck {
@@ -23,26 +23,25 @@ namespace duck {
  */
 template <typename It>
 class ReadableIterator {
-    DUCK_I_TEST_EXPRESSION(dereference, *std::declval<I>(), typename I);
+    DUCK_I_TEST_EXPRESSION(dereference, *boost::declval<I>(), typename I);
     DUCK_I_TEST_TYPE(value_type_,
                 typename detail::iterator_traits<I>::value_type, typename I);
-    using Value = typename value_type_<It>::type;
+    typedef typename value_type_<It>::type Value;
 
 public:
-    using type =
-        typename boost::mpl::and_<
-            Assignable<It>,
-            CopyConstructible<It>,
+    typedef typename boost::mpl::and_<
+                Assignable<It>,
+                CopyConstructible<It>,
 
-            detail::is_valid<Value>,
-            std::is_convertible<typename dereference<It>::type, Value>
+                detail::is_valid<Value>,
+                boost::is_convertible<typename dereference<It>::type, Value>
 
-            // We should also check whether it->m returns a reference to the
-            // member inside its pointee, but that would require asking a
-            // pointer to a member, which seems overly restrictive. Also,
-            // non class-or-struct types don't care about this.
-
-        >::type;
+                // We should also check whether it->m returns a reference to
+                // the member inside its pointee, but that would require
+                // asking a pointer to a member, which seems overly
+                // restrictive. Also, non class-or-struct types don't care
+                // about this.
+            >::type type;
     static bool const value = type::value;
 };
 

@@ -1,5 +1,5 @@
 /**
- * This file defines the @em DUCK_TEST_EXPRESSION helper macro.
+ * This file defines the @em DUCK_I_TEST_EXPRESSION helper macro.
  */
 
 #ifndef DUCK_DETAIL_TEST_EXPRESSION_HPP
@@ -9,8 +9,8 @@
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/not.hpp>
-#include <type_traits>
-#include <utility>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/utility/declval.hpp>
 
 
 namespace duck {
@@ -21,8 +21,12 @@ namespace duck {
         * Metafunction returning whether its argument is valid, i.e.
         * if it is not the same as `duck::detail::invalid`.
         */
-       template <typename T>
-       struct is_valid : boost::mpl::not_<std::is_same<T, invalid>> { };
+        template <typename T>
+        struct is_valid
+            : boost::mpl::not_<
+                boost::is_same<T, invalid>
+            >
+        { };
     }
 }
 
@@ -46,17 +50,16 @@ class name {                                                                \
                                                                             \
     template <__VA_ARGS__>                                                  \
     struct delayed_type {                                                   \
-        using type = as_type;                                               \
+        typedef as_type type;                                               \
     };                                                                      \
                                                                             \
-    using is_valid = decltype(test_validity<DUCK_I_UNIQUE(Args)...>(0));    \
+    typedef decltype(test_validity<DUCK_I_UNIQUE(Args)...>(0)) is_valid;    \
                                                                             \
 public:                                                                     \
-    using type =                                                            \
-        typename ::boost::mpl::eval_if<is_valid,                            \
-            delayed_type<DUCK_I_UNIQUE(Args)...>,                           \
-            ::boost::mpl::identity<::duck::detail::invalid>                 \
-        >::type;                                                            \
+    typedef typename ::boost::mpl::eval_if<is_valid,                        \
+                delayed_type<DUCK_I_UNIQUE(Args)...>,                       \
+                ::boost::mpl::identity<::duck::detail::invalid>             \
+            >::type type;                                                   \
 }                                                                           \
 /**/
 
@@ -82,6 +85,6 @@ public:                                                                     \
  * Same as above, but test for types instead of expressions.
  */
 #define DUCK_I_TEST_TYPE(name, type, ...) \
-    DUCK_I_TEST_BASE(name, ::std::declval<type>(), type, __VA_ARGS__)
+    DUCK_I_TEST_BASE(name, ::boost::declval<type>(), type, __VA_ARGS__)
 
 #endif // !DUCK_DETAIL_TEST_EXPRESSION_HPP

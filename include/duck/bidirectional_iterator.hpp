@@ -10,9 +10,8 @@
 
 #include <boost/mpl/and.hpp>
 #include <boost/type_traits/add_lvalue_reference.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/declval.hpp>
-#include <type_traits>
-#include <utility>
 
 
 namespace duck {
@@ -31,12 +30,12 @@ public:
         typename boost::mpl::and_<
             ForwardIterator<It>,
 
-            std::is_convertible<
+            boost::is_convertible<
                 typename pre_decrement<It>::type,
                 typename boost::add_lvalue_reference<It>::type
             >,
 
-            std::is_convertible<
+            boost::is_convertible<
                 typename post_decrement<It>::type, It
             >
         >::type;
