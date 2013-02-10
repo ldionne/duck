@@ -6,6 +6,7 @@
 #define DUCK_CONCEPT_OVERLOAD_HPP
 
 #include <duck/detail/mpl_extensions.hpp>
+#include <duck/models.hpp>
 
 #include <boost/config.hpp>
 #include <boost/mpl/and.hpp>
@@ -47,21 +48,6 @@ struct concept_based_overload_resolution_failed
 }
 #endif
 ;
-
-//! Compile-time data structure storing state during an overload resolution.
-template <typename Family, typename VisitedConcepts = boost::mpl::vector<> >
-struct overload_resolution {
-    typedef VisitedConcepts visited_concepts;
-    typedef Family family;
-
-    typedef overload_resolution type; // to make it a metafunction
-};
-
-//! Metafunction returning whether a `Type` is a model of a given `Concept`.
-template <typename Concept, typename Type>
-struct models
-    : boost::mpl::apply<Concept, Type>
-{ };
 
 /**
  * Trait that must be specialized by new concepts to specify a partial order
@@ -105,6 +91,15 @@ struct perform_overload {
 };
 
 namespace concept_overload_detail {
+//! Compile-time data structure storing state during an overload resolution.
+template <typename Family, typename VisitedConcepts = boost::mpl::vector<> >
+struct overload_resolution {
+    typedef VisitedConcepts visited_concepts;
+    typedef Family family;
+
+    typedef overload_resolution type; // to make it a metafunction
+};
+
 /**
  * Add a `Concept` to the list of concepts visited during the current
  * overload resolution.
