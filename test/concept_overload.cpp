@@ -69,21 +69,19 @@ namespace duck {
 //////////////////////////////////////////////////////////////////////////////
 
 
-struct distance_tag;
-
-namespace duck {
-    template <typename VisitedConcepts>
-    struct result_of_call<distance_tag, VisitedConcepts> {
+struct distance_tag {
+    template <typename State>
+    struct perform_overload {
         template <typename Iterator>
         struct apply {
             typedef decltype(
                         distance(boost::declval<Iterator>(),
                                  boost::declval<Iterator>(),
-                                 VisitedConcepts())
+                                 State())
                     ) type;
         };
     };
-}
+};
 duck::concept_based_overload_resolution_failed distance(...);
 
 

@@ -77,11 +77,21 @@ struct is_more_specific_than<Concept, Concept>
  * Metafunction class returning the result of calling the function overloaded
  * by `Family` at the current stage of the overload resolution.
  *
- * @note This metafunction class must be specialized by each family of
- *       overload.
+ * @note This metafunction class may be specialized by each family of
+ *       overload, or the family may define a
+ *       `perform_overload<OverloadResolution>` nested metafunction class
+ *       accepting arguments to perform the overload.
  */
 template <typename Family, typename OverloadResolution>
-struct result_of_call;
+struct perform_overload {
+    template <typename ...Args>
+    struct apply
+        : boost::mpl::apply<
+            typename Family::template perform_overload<OverloadResolution>,
+            Args...
+        >
+    { };
+};
 
 namespace concept_overload_detail {
 /**
@@ -144,7 +154,7 @@ class clause_passes {
     template <typename ...Args>
     struct result_of_calling_the_function_with
         : boost::mpl::apply<
-            result_of_call<
+            perform_overload<
                 typename OverloadResolution::family,
                 typename mark_as_visited<Concept, OverloadResolution>::type
             >,
