@@ -1,15 +1,15 @@
 /**
- * Test suite for the @em LvalueIterator concept.
+ * Test suite for the `LvalueIterator` concept.
  */
 
 #include <duck/lvalue_iterator.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 #include <vector>
 
 
-#define ASSERT_LI(T) ASSERT_MODELS(duck::LvalueIterator, T)
-#define ASSERT_NOT_LI(T) ASSERT_NOT_MODELS(duck::LvalueIterator, T)
+#define ASSERT_LI(T) BOOST_MPL_ASSERT((duck::is_lvalue_iterator<T>))
+#define ASSERT_NOT_LI(T) BOOST_MPL_ASSERT_NOT((duck::is_lvalue_iterator<T>))
 
 // Test with primitive types.
 ASSERT_NOT_LI(int);
