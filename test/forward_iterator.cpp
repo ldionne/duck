@@ -1,16 +1,16 @@
 /**
- * Test suite for the @em ForwardIterator concept.
+ * Test suite for the `ForwardIterator` concept.
  */
 
 #include <duck/forward_iterator.hpp>
 #include <duck/detail/config.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 #include <vector>
 
 
-#define ASSERT_FI(T) ASSERT_MODELS(duck::ForwardIterator, T)
-#define ASSERT_NOT_FI(T) ASSERT_NOT_MODELS(duck::ForwardIterator, T)
+#define ASSERT_FI(T) BOOST_MPL_ASSERT((duck::is_forward_iterator<T>))
+#define ASSERT_NOT_FI(T) BOOST_MPL_ASSERT_NOT((duck::is_forward_iterator<T>))
 
 // Test with primitive types.
 ASSERT_NOT_FI(int);

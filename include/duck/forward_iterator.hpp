@@ -1,5 +1,5 @@
 /**
- * This file defines the @em ForwardIterator concept.
+ * This file defines the `ForwardIterator` concept.
  */
 
 #ifndef DUCK_FORWARD_ITERATOR_HPP
@@ -8,6 +8,7 @@
 #include <duck/default_constructible.hpp>
 #include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
+#include <duck/models.hpp>
 #include <duck/single_pass_iterator.hpp>
 
 #include <boost/mpl/and.hpp>
@@ -17,26 +18,41 @@
 
 namespace duck {
 
-/**
- * Metafunction returning whether @em It models the @em ForwardIterator
- * concept.
- */
-template <typename It>
-class ForwardIterator {
+namespace forward_detail {
+template <typename Iterator>
+class is_forward_iterator_impl {
     DUCK_I_TEST_TYPE(difference_type_,
             typename detail::iterator_traits<I>::difference_type, typename I);
-    typedef typename difference_type_<It>::type Difference;
+    typedef typename difference_type_<Iterator>::type Difference;
 
 public:
     typedef typename boost::mpl::and_<
-                DefaultConstructible<It>,
-                SinglePassIterator<It>,
+                DefaultConstructible<Iterator>,
+                SinglePassIterator<Iterator>,
                 detail::is_valid<Difference>,
                 boost::is_integral<Difference>,
                 boost::is_signed<Difference>
             >::type type;
     static bool const value = type::value;
 };
+} // end namespace forward_detail
+
+//! `ForwardIterator` concept.
+struct ForwardIterator {
+    template <typename Iterator>
+    struct apply
+        : forward_detail::is_forward_iterator_impl<Iterator>
+    { };
+};
+
+/**
+ * Metafunction returning whether an `Iterator` models the `ForwardIterator`
+ * concept.
+ */
+template <typename Iterator>
+struct is_forward_iterator
+    : models<ForwardIterator, Iterator>
+{ };
 
 } // end namespace duck
 
