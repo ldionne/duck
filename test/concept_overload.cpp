@@ -69,23 +69,18 @@ namespace duck {
 //////////////////////////////////////////////////////////////////////////////
 
 
-struct distance_tag {
-    template <typename State>
-    struct perform_overload {
-        template <typename Iterator>
-        struct apply {
-            typedef decltype(
-                        distance(boost::declval<Iterator>(),
-                                 boost::declval<Iterator>(),
-                                 State())
-                    ) type;
-        };
-    };
-};
-duck::concept_based_overload_resolution_failed distance(...);
+DUCK_ENABLE_CONCEPT_OVERLOADING(distance,
+    distance(boost::declval<Iterator>(), boost::declval<Iterator>(), State()),
+    typename Iterator
+)
 
+// struct no { char c[1]; };
+// struct yes { char c[2]; };
+// template <typename T> no is_overload_failure(T const&);
+// yes is_overload_failure(concept_based_overload_resolution_failed const&);
+// typedef bool_<sizeof(is_overload_failure(HARD_HERE)) == sizeof(yes)> works;
 
-template <typename Iterator, typename State = duck::overload_resolution<distance_tag> >
+template <typename Iterator, typename State = tag::distance>
 typename duck::requires<
     duck::model_of<RandomAccessTraversal, Iterator>
     // possibly other requirements
@@ -99,7 +94,7 @@ distance(Iterator first, Iterator last, State = State()) {
     return last - first;
 }
 
-template <typename Iterator, typename State = duck::overload_resolution<distance_tag> >
+template <typename Iterator, typename State = tag::distance>
 typename duck::requires<
     duck::model_of<ForwardTraversal, Iterator>
     // possibly other requirements
@@ -147,7 +142,7 @@ namespace duck {
     { };
 }
 
-template <typename Iterator, typename State = duck::overload_resolution<distance_tag> >
+template <typename Iterator, typename State = tag::distance>
 typename duck::requires<
     duck::model_of<ZeroDistIterator, Iterator>
     // possibly other requirements

@@ -9,8 +9,8 @@
 
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/apply.hpp>
-#include <boost/mpl/bool.hpp>
 #include <boost/mpl/back.hpp>
+#include <boost/mpl/bool.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/copy_if.hpp>
 #include <boost/mpl/deref.hpp>
@@ -21,6 +21,7 @@
 #include <boost/mpl/push_front.hpp>
 #include <boost/mpl/quote.hpp>
 #include <boost/mpl/vector.hpp>
+#include <boost/preprocessor/cat.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 
@@ -198,9 +199,14 @@ struct is_model_of_clause<model_of<Concept, Type> >
 { };
 
 //! Provides the current `OverloadResolution` state to a `require` clause.
-template <typename OverloadResolution>
+template <typename Family>
 struct overload_resolution_state {
-    typedef OverloadResolution type;
+    typedef overload_resolution<Family> type;
+};
+
+template <typename ...Args>
+struct overload_resolution_state<overload_resolution<Args...> > {
+    typedef overload_resolution<Args...> type;
 };
 
 template <typename T>
@@ -311,6 +317,40 @@ struct requires
         typename concept_overload_detail::requires_impl<Args...>::return_type
     >
 { };
+
+/**
+ * Macro to enable concept overloading on a family of overloads.
+ *
+ * @param FUNCTION The name of the function that is overloaded using concepts.
+ * @param CALL An expression calling the function. This expression can use
+ *        the templates parameters provided in `__VA_ARGS__`.
+ * @param ... A list of `typename T` template parameters that will be usable
+ *            within the `CALL` expression. The `State` parameter is always
+ *            available within the `CALL` expression and it represents the
+ *            current state of the overload resolution.
+ *
+ * Once instantiated, this macro will create a type named `FUNCTION` inside a
+ * `tag` namespace. This type should be used as the default overload
+ * resolution state for overloads within this family.
+ */
+#define DUCK_ENABLE_CONCEPT_OVERLOADING(FUNCTION, CALL, .../*typenames*/)   \
+    ::duck::concept_based_overload_resolution_failed FUNCTION(...);         \
+    namespace tag {                                                         \
+        /* We can't call the structure FUNCTION because it would clash */   \
+        /* with the CALL expansion. */                                      \
+        struct BOOST_PP_CAT(FUNCTION, _tag) {                               \
+            template <typename State>                                       \
+            struct perform_overload {                                       \
+                template <__VA_ARGS__>                                      \
+                struct apply {                                              \
+                    typedef decltype(CALL) type;                            \
+                };                                                          \
+            };                                                              \
+        };                                                                  \
+        /* Now we can make the alias */                                     \
+        typedef BOOST_PP_CAT(FUNCTION, _tag) FUNCTION;                      \
+    }                                                                       \
+/**/
 
 } // end namespace duck
 
