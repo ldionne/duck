@@ -1,5 +1,5 @@
 /**
- * This file defines the @em SwappableIterator concept.
+ * This file defines the `SwappableIterator` concept.
  */
 
 #ifndef DUCK_SWAPPABLE_ITERATOR_HPP
@@ -18,11 +18,11 @@
 namespace duck {
 
 /**
- * Metafunction returning whether @em It models the @em SwappableIterator
+ * Metafunction returning whether an `Iterator` models the `SwappableIterator`
  * concept.
  */
-template <typename It>
-class SwappableIterator {
+template <typename Iterator>
+class is_swappable_iterator {
     DUCK_I_TEST_EXPRESSION(iter_swap_adl,
                     iter_swap(boost::declval<I&>(), boost::declval<I&>()),
                     typename I);
@@ -32,9 +32,10 @@ class SwappableIterator {
                 typename I);
 
     // Because of the current implementation of `std::iter_swap`, compilation
-    // will fail instead of triggering SFINAE if It is not dereferenceable or
-    // if the result of dereferencing it is not assignable. Therefore, we
-    // will make sure that It fulfils these conditions on our side.
+    // will fail instead of triggering SFINAE if `Iterator` is not
+    // dereferenceable or if the result of dereferencing it is not assignable.
+    // Therefore, we will make sure that It fulfils these conditions on our
+    // side.
     DUCK_I_TEST_EXPRESSION(swap_adl,
                     swap(boost::declval<I&>(), boost::declval<I&>()),
                     typename I);
@@ -58,13 +59,21 @@ class SwappableIterator {
 
 public:
     typedef typename boost::mpl::and_<
-                CopyConstructible<It>,
+                CopyConstructible<Iterator>,
                 boost::mpl::or_<
-                    detail::is_valid<typename iter_swap_adl<It>::type>,
-                    std_iter_swap_is_valid<It>
+                    detail::is_valid<typename iter_swap_adl<Iterator>::type>,
+                    std_iter_swap_is_valid<Iterator>
                 >
             >::type type;
     static bool const value = type::value;
+};
+
+//! `SwappableIterator` concept.
+struct SwappableIterator {
+    template <typename Iterator>
+    struct apply
+        : is_swappable_iterator<Iterator>
+    { };
 };
 
 } // end namespace duck
