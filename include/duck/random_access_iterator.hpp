@@ -51,7 +51,7 @@ class is_random_access_iterator_impl {
 
 public:
     typedef typename boost::mpl::and_<
-                BidirectionalIterator<Iterator>,
+                is_bidirectional_iterator<Iterator>,
                 Comparable<Iterator>,
 
                 detail::is_valid<Value>,

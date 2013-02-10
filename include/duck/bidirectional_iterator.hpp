@@ -1,5 +1,5 @@
 /**
- * This file defines the @em BidirectionalIterator concept.
+ * This file defines the `BidirectionalIterator` concept.
  */
 
 #ifndef DUCK_BIDIRECTIONAL_ITERATOR_HPP
@@ -7,6 +7,7 @@
 
 #include <duck/detail/test_expression.hpp>
 #include <duck/forward_iterator.hpp>
+#include <duck/models.hpp>
 
 #include <boost/mpl/and.hpp>
 #include <boost/type_traits/add_lvalue_reference.hpp>
@@ -16,30 +17,45 @@
 
 namespace duck {
 
-/**
- * Metafunction returning whether @em It models the @em BidirectionalIterator
- * concept.
- */
-template <typename It>
-class BidirectionalIterator {
+namespace bidirectional_detail {
+template <typename Iterator>
+class is_bidirectional_iterator_impl {
     DUCK_I_TEST_EXPRESSION(pre_decrement, --boost::declval<I&>(), typename I);
     DUCK_I_TEST_EXPRESSION(post_decrement, boost::declval<I&>()--, typename I);
 
 public:
     typedef typename boost::mpl::and_<
-                ForwardIterator<It>,
+                is_forward_iterator<Iterator>,
 
                 boost::is_convertible<
-                    typename pre_decrement<It>::type,
-                    typename boost::add_lvalue_reference<It>::type
+                    typename pre_decrement<Iterator>::type,
+                    typename boost::add_lvalue_reference<Iterator>::type
                 >,
 
                 boost::is_convertible<
-                    typename post_decrement<It>::type, It
+                    typename post_decrement<Iterator>::type, Iterator
                 >
             >::type type;
     static bool const value = type::value;
 };
+} // end namespace bidirectional_detail
+
+//! `BidirectionalIterator` concept.
+struct BidirectionalIterator {
+    template <typename Iterator>
+    struct apply
+        : bidirectional_detail::is_bidirectional_iterator_impl<Iterator>
+    { };
+};
+
+/**
+ * Metafunction returning whether an `Iterator` models the
+ * `BidirectionalIterator` concept.
+ */
+template <typename Iterator>
+struct is_bidirectional_iterator
+    : models<BidirectionalIterator, Iterator>
+{ };
 
 } // end namespace duck
 
