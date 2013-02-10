@@ -35,7 +35,7 @@ class is_writeable_iterator {
 
 public:
     typedef typename boost::mpl::and_<
-                CopyConstructible<Iterator>,
+                is_copy_constructible<Iterator>,
                 detail::is_valid<typename assign_deref<Iterator, Value>::type>
             >::type type;
     static bool const value = type::value;

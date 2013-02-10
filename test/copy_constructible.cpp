@@ -1,14 +1,14 @@
 /**
- * Test suite for the @em CopyConstructible concept.
+ * Test suite for the `CopyConstructible` concept.
  */
 
 #include <duck/copy_constructible.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 
 
-#define ASSERT_CC(T) ASSERT_MODELS(duck::CopyConstructible, T)
-#define ASSERT_NOT_CC(T) ASSERT_NOT_MODELS(duck::CopyConstructible, T)
+#define ASSERT_CC(T) BOOST_MPL_ASSERT((duck::is_copy_constructible<T>))
+#define ASSERT_NOT_CC(T) BOOST_MPL_ASSERT_NOT((duck::is_copy_constructible<T>))
 
 // Test for a primitive type.
 ASSERT_CC(int);

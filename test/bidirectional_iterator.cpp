@@ -1,5 +1,5 @@
 /**
- * Test suite for the @em BidirectionalIterator concept.
+ * Test suite for the `BidirectionalIterator` concept.
  */
 
 #include <duck/bidirectional_iterator.hpp>

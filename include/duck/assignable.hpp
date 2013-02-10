@@ -1,5 +1,5 @@
 /**
- * This file defines the @em Assignable concept.
+ * This file defines the `Assignable` concept.
  */
 
 #ifndef DUCK_ASSIGNABLE_HPP
@@ -18,11 +18,9 @@
 
 namespace duck {
 
-/**
- * Metafunction returning whether @em T models the @em Assignable concept.
- */
+//! Metafunction returning whether `T` models the `Assignable` concept.
 template <typename T>
-class Assignable {
+class is_assignable {
     DUCK_I_TEST_EXPRESSION(assignment,
                            boost::declval<Tgt>() = boost::declval<Src>(),
                            typename Tgt, typename Src);
@@ -49,6 +47,14 @@ public:
                 boost::mpl::false_
             >::type type;
     static bool const value = type::value;
+};
+
+//! `Assignable` concept.
+struct Assignable {
+    template <typename T>
+    struct apply
+        : is_assignable<T>
+    { };
 };
 
 } // end namespace duck

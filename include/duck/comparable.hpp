@@ -1,5 +1,5 @@
 /**
- * This file defines the @em Comparable concept.
+ * This file defines the `Comparable` concept.
  */
 
 #ifndef DUCK_COMPARABLE_HPP
@@ -14,11 +14,9 @@
 
 namespace duck {
 
-/**
- * Metafunction returning whether @em T models the @em Comparable concept.
- */
+//! Metafunction returning whether `T` models the `Comparable` concept.
 template <typename T>
-class Comparable {
+class is_comparable {
     DUCK_I_TEST_EXPRESSION(lt, boost::declval<U>() < boost::declval<U>(),
                                                                 typename U);
     DUCK_I_TEST_EXPRESSION(gt, boost::declval<U>() > boost::declval<U>(),
@@ -36,6 +34,14 @@ public:
                 boost::is_convertible<typename ge<T>::type, bool>
             >::type type;
     static bool const value = type::value;
+};
+
+//! `Comparable` concept.
+struct Comparable {
+    template <typename T>
+    struct apply
+        : is_comparable<T>
+    { };
 };
 
 } // end namespace duck

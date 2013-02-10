@@ -2,8 +2,8 @@
  * This file defines facilities to perform concept-based overloading.
  */
 
-#ifndef DUCK_CONCEPT_OVERLOAD_HPP
-#define DUCK_CONCEPT_OVERLOAD_HPP
+#ifndef DUCK_REQUIRES_HPP
+#define DUCK_REQUIRES_HPP
 
 #include <duck/detail/mpl_extensions.hpp>
 #include <duck/models.hpp>
@@ -90,7 +90,7 @@ struct perform_overload {
     { };
 };
 
-namespace concept_overload_detail {
+namespace requires_detail {
 //! Compile-time data structure storing state during an overload resolution.
 template <typename Family, typename VisitedConcepts = boost::mpl::vector<> >
 struct overload_resolution {
@@ -294,12 +294,12 @@ struct requires_impl {
             >::type type;
     static bool const value = type::value;
 };
-} // end namespace concept_overload_detail
+} // end namespace requires_detail
 
 // Named parameters for `requires`
-using concept_overload_detail::model_of;
-using concept_overload_detail::overload_resolution_state;
-using concept_overload_detail::template_parameters;
+using requires_detail::model_of;
+using requires_detail::overload_resolution_state;
+using requires_detail::template_parameters;
 
 /**
  * Metafunction to perform concept-based overloading.
@@ -318,8 +318,8 @@ using concept_overload_detail::template_parameters;
 template <typename ...Args>
 struct requires
     : boost::enable_if<
-        concept_overload_detail::requires_impl<Args...>,
-        typename concept_overload_detail::requires_impl<Args...>::return_type
+        requires_detail::requires_impl<Args...>,
+        typename requires_detail::requires_impl<Args...>::return_type
     >
 { };
 
@@ -359,4 +359,4 @@ struct requires
 
 } // end namespace duck
 
-#endif // !DUCK_CONCEPT_OVERLOAD_HPP
+#endif // !DUCK_REQUIRES_HPP

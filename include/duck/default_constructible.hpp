@@ -1,5 +1,5 @@
 /**
- * This file defines the @em DefaultConstructible concept.
+ * This file defines the `DefaultConstructible` concept.
  */
 
 #ifndef DUCK_DEFAULT_CONSTRUCTIBLE_HPP
@@ -11,11 +11,21 @@
 namespace duck {
 
 /**
- * Metafunction returning whether @em T models the @em DefaultConstructible
+ * Metafunction returning whether `T` models the `DefaultConstructible`
  * concept.
  */
 template <typename T>
-struct DefaultConstructible : std::is_default_constructible<T> { };
+struct is_default_constructible
+    : std::is_default_constructible<T>
+{ };
+
+//! `DefaultConstructible` concept.
+struct DefaultConstructible {
+    template <typename T>
+    struct apply
+        : is_default_constructible<T>
+    { };
+};
 
 } // end namespace duck
 

@@ -29,8 +29,8 @@ class is_incrementable_iterator {
 
 public:
     typedef typename boost::mpl::and_<
-                Assignable<Iterator>,
-                CopyConstructible<Iterator>,
+                is_assignable<Iterator>,
+                is_copy_constructible<Iterator>,
 
                 boost::is_convertible<
                     typename pre_increment<Iterator>::type,

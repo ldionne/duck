@@ -1,5 +1,5 @@
 /**
- * This file defines the @em null_archetype class.
+ * This file defines the `null_archetype` class.
  */
 
 #ifndef DUCK_NULL_ARCHETYPE_HPP

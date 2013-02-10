@@ -1,14 +1,15 @@
 /**
- * Test suite for the @em EqualityComparable concept.
+ * Test suite for the `EqualityComparable` concept.
  */
 
 #include <duck/equality_comparable.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 
 
-#define ASSERT_EC(T) ASSERT_MODELS(duck::EqualityComparable, T)
-#define ASSERT_NOT_EC(T) ASSERT_NOT_MODELS(duck::EqualityComparable, T)
+#define ASSERT_EC(T) BOOST_MPL_ASSERT((duck::is_equality_comparable<T>))
+#define ASSERT_NOT_EC(T) \
+    BOOST_MPL_ASSERT_NOT((duck::is_equality_comparable<T>))
 
 // Test for a primitive type.
 ASSERT_EC(int);

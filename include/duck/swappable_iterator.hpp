@@ -52,14 +52,14 @@ class is_swappable_iterator {
                         detail::is_valid<
                             typename swap_adl<Dereference>::type
                         >,
-                        Assignable<Dereference>
+                        is_assignable<Dereference>
                     >
                 >::type type;
     };
 
 public:
     typedef typename boost::mpl::and_<
-                CopyConstructible<Iterator>,
+                is_copy_constructible<Iterator>,
                 boost::mpl::or_<
                     detail::is_valid<typename iter_swap_adl<Iterator>::type>,
                     std_iter_swap_is_valid<Iterator>

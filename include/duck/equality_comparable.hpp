@@ -1,5 +1,5 @@
 /**
- * This file defines the @em EqualityComparable concept.
+ * This file defines the `EqualityComparable` concept.
  */
 
 #ifndef DUCK_EQUALITY_COMPARABLE_HPP
@@ -15,11 +15,11 @@
 namespace duck {
 
 /**
- * Metafunction returning whether @em T models the @em EqualityComparable
+ * Metafunction returning whether `T` models the `EqualityComparable`
  * concept.
  */
 template <typename T>
-class EqualityComparable {
+class is_equality_comparable {
     DUCK_I_TEST_EXPRESSION(equal, boost::declval<U>() == boost::declval<V>(),
                                                     typename U, typename V);
     DUCK_I_TEST_EXPRESSION(not_equal,
@@ -31,6 +31,14 @@ public:
                 boost::is_convertible<typename not_equal<T, T>::type, bool>
             >::type type;
     static bool const value = type::value;
+};
+
+//! `EqualityComparable` concept.
+struct EqualityComparable {
+    template <typename T>
+    struct apply
+        : is_equality_comparable<T>
+    { };
 };
 
 } // end namespace duck

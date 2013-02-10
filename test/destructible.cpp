@@ -4,11 +4,11 @@
 
 #include <duck/destructible.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 
 
-#define ASSERT_D(T) ASSERT_MODELS(duck::Destructible, T)
-#define ASSERT_NOT_D(T) ASSERT_NOT_MODELS(duck::Destructible, T)
+#define ASSERT_D(T) BOOST_MPL_ASSERT((duck::is_destructible<T>))
+#define ASSERT_NOT_D(T) BOOST_MPL_ASSERT_NOT((duck::is_destructible<T>))
 
 // Test for a primitive type.
 ASSERT_D(int);

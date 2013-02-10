@@ -1,14 +1,15 @@
 /**
- * Test suite for the @em DefaultConstructible concept.
+ * Test suite for the `DefaultConstructible` concept.
  */
 
 #include <duck/default_constructible.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 
 
-#define ASSERT_DC(T) ASSERT_MODELS(duck::DefaultConstructible, T)
-#define ASSERT_NOT_DC(T) ASSERT_NOT_MODELS(duck::DefaultConstructible, T)
+#define ASSERT_DC(T) BOOST_MPL_ASSERT((duck::is_default_constructible<T>))
+#define ASSERT_NOT_DC(T) \
+    BOOST_MPL_ASSERT_NOT((duck::is_default_constructible<T>))
 
 // Test for a primitive type.
 ASSERT_DC(int);

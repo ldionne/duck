@@ -1,5 +1,5 @@
 /**
- * This file defines the @em Destructible concept.
+ * This file defines the `Destructible` concept.
  */
 
 #ifndef DUCK_DESTRUCTIBLE_HPP
@@ -11,11 +11,21 @@
 namespace duck {
 
 /**
- * Metafunction returning whether @em T models the @em Destructible
+ * Metafunction returning whether `T` models the `Destructible`
  * concept.
  */
 template <typename T>
-struct Destructible : std::is_destructible<T> { };
+struct is_destructible
+    : std::is_destructible<T>
+{ };
+
+//! `Destructible` concept.
+struct Destructible {
+    template <typename T>
+    struct apply
+        : is_destructible<T>
+    { };
+};
 
 } // end namespace duck
 

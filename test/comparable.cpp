@@ -1,14 +1,14 @@
 /**
- * Test suite for the @em Comparable concept.
+ * Test suite for the `Comparable` concept.
  */
 
 #include <duck/comparable.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 
 
-#define ASSERT_C(T) ASSERT_MODELS(duck::Comparable, T)
-#define ASSERT_NOT_C(T) ASSERT_NOT_MODELS(duck::Comparable, T)
+#define ASSERT_C(T) BOOST_MPL_ASSERT((duck::is_comparable<T>))
+#define ASSERT_NOT_C(T) BOOST_MPL_ASSERT_NOT((duck::is_comparable<T>))
 
 // Test for a primitive type.
 ASSERT_C(int);

@@ -1,5 +1,5 @@
 /**
- * This file defines the @em LessThanComparable concept.
+ * This file defines the `LessThanComparable` concept.
  */
 
 #ifndef DUCK_LESS_THAN_COMPARABLE_HPP
@@ -14,11 +14,11 @@
 namespace duck {
 
 /**
- * Metafunction returning whether @em T models the @em LessThanComparable
+ * Metafunction returning whether `T` models the `LessThanComparable`
  * concept.
  */
 template <typename T>
-class LessThanComparable {
+class is_less_than_comparable {
     DUCK_I_TEST_EXPRESSION(less_than,
                     boost::declval<U>() < boost::declval<U>(), typename U);
 
@@ -27,6 +27,13 @@ public:
                 typename less_than<T>::type, bool
             >::type type;
     static bool const value = type::value;
+};
+
+struct LessThanComparable {
+    template <typename T>
+    struct apply
+        : is_less_than_comparable<T>
+    { };
 };
 
 } // end namespace duck

@@ -11,7 +11,7 @@
 #include <boost/mpl/assert.hpp>
 
 
-BOOST_MPL_ASSERT_NOT((duck::Assignable<duck::null_archetype>));
-BOOST_MPL_ASSERT_NOT((duck::CopyConstructible<duck::null_archetype>));
-BOOST_MPL_ASSERT_NOT((duck::DefaultConstructible<duck::null_archetype>));
-BOOST_MPL_ASSERT_NOT((duck::Destructible<duck::null_archetype>));
+BOOST_MPL_ASSERT_NOT((duck::is_assignable<duck::null_archetype>));
+BOOST_MPL_ASSERT_NOT((duck::is_copy_constructible<duck::null_archetype>));
+BOOST_MPL_ASSERT_NOT((duck::is_default_constructible<duck::null_archetype>));
+BOOST_MPL_ASSERT_NOT((duck::is_destructible<duck::null_archetype>));

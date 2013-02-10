@@ -52,7 +52,7 @@ class is_random_access_iterator_impl {
 public:
     typedef typename boost::mpl::and_<
                 is_bidirectional_iterator<Iterator>,
-                Comparable<Iterator>,
+                is_comparable<Iterator>,
 
                 detail::is_valid<Value>,
                 detail::is_valid<Difference>,

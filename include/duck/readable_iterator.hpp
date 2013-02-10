@@ -30,8 +30,8 @@ class is_readable_iterator {
 
 public:
     typedef typename boost::mpl::and_<
-                Assignable<Iterator>,
-                CopyConstructible<Iterator>,
+                is_assignable<Iterator>,
+                is_copy_constructible<Iterator>,
 
                 detail::is_valid<Value>,
                 boost::is_convertible<

@@ -1,14 +1,15 @@
 /**
- * Test suite for the @em LessThanComparable concept.
+ * Test suite for the `LessThanComparable` concept.
  */
 
 #include <duck/less_than_comparable.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 
 
-#define ASSERT_LTC(T) ASSERT_MODELS(duck::LessThanComparable, T)
-#define ASSERT_NOT_LTC(T) ASSERT_NOT_MODELS(duck::LessThanComparable, T)
+#define ASSERT_LTC(T) BOOST_MPL_ASSERT((duck::is_less_than_comparable<T>))
+#define ASSERT_NOT_LTC(T) \
+    BOOST_MPL_ASSERT_NOT((duck::is_less_than_comparable<T>))
 
 // Test for a primitive type.
 ASSERT_LTC(int);
