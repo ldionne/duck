@@ -1,15 +1,16 @@
 /**
- * Test suite for the @em IncrementableIterator concept.
+ * Test suite for the `IncrementableIterator` concept.
  */
 
 #include <duck/incrementable_iterator.hpp>
 
-#include "unit_test_helper.hpp"
+#include <boost/mpl/assert.hpp>
 #include <vector>
 
 
-#define ASSERT_II(T) ASSERT_MODELS(duck::IncrementableIterator, T)
-#define ASSERT_NOT_II(T) ASSERT_NOT_MODELS(duck::IncrementableIterator, T)
+#define ASSERT_II(T) BOOST_MPL_ASSERT((duck::is_incrementable_iterator<T>))
+#define ASSERT_NOT_II(T) \
+    BOOST_MPL_ASSERT_NOT((duck::is_incrementable_iterator<T>))
 
 // Test with primitive types.
 ASSERT_II(int);

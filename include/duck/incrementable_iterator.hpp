@@ -1,5 +1,5 @@
 /**
- * This file defines the @em IncrementableIterator concept.
+ * This file defines the `IncrementableIterator` concept.
  */
 
 #ifndef DUCK_INCREMENTABLE_ITERATOR_HPP
@@ -19,30 +19,38 @@
 namespace duck {
 
 /**
- * Metafunction returning whether @em It models the @em IncrementableIterator
- * concept.
+ * Metafunction returning whether an `Iterator` models the
+ * `IncrementableIterator` concept.
  */
-template <typename It>
-class IncrementableIterator {
+template <typename Iterator>
+class is_incrementable_iterator {
     DUCK_I_TEST_EXPRESSION(pre_increment, ++boost::declval<I&>(), typename I);
     DUCK_I_TEST_EXPRESSION(post_increment, boost::declval<I&>()++, typename I);
 
 public:
     typedef typename boost::mpl::and_<
-                Assignable<It>,
-                CopyConstructible<It>,
+                Assignable<Iterator>,
+                CopyConstructible<Iterator>,
 
                 boost::is_convertible<
-                    typename pre_increment<It>::type,
-                    typename boost::add_lvalue_reference<It>::type
+                    typename pre_increment<Iterator>::type,
+                    typename boost::add_lvalue_reference<Iterator>::type
                 >,
 
                 boost::is_convertible<
-                    typename post_increment<It>::type,
-                    typename boost::remove_reference<It>::type
+                    typename post_increment<Iterator>::type,
+                    typename boost::remove_reference<Iterator>::type
                 >
             >::type type;
     static bool const value = type::value;
+};
+
+//! `IncrementableIterator` concept.
+struct IncrementableIterator {
+    template <typename Iterator>
+    struct apply
+        : is_incrementable_iterator<Iterator>
+    { };
 };
 
 } // end namespace duck

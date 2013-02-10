@@ -21,7 +21,7 @@ template <typename Iterator>
 struct is_single_pass_iterator
     : boost::mpl::and_<
         EqualityComparable<Iterator>,
-        IncrementableIterator<Iterator>
+        is_incrementable_iterator<Iterator>
     >
 { };
 
