@@ -74,12 +74,6 @@ DUCK_ENABLE_CONCEPT_OVERLOADING(distance,
     typename Iterator
 )
 
-// struct no { char c[1]; };
-// struct yes { char c[2]; };
-// template <typename T> no is_overload_failure(T const&);
-// yes is_overload_failure(concept_based_overload_resolution_failed const&);
-// typedef bool_<sizeof(is_overload_failure(HARD_HERE)) == sizeof(yes)> works;
-
 template <typename Iterator, typename State = tag::distance>
 typename duck::requires<
     duck::model_of<RandomAccessTraversal, Iterator>
@@ -151,7 +145,7 @@ typename duck::requires<
   , duck::template_parameters<Iterator>
 
 , std::size_t>::type
-distance(Iterator first, Iterator last, State = State()) {
+distance(Iterator, Iterator, State = State()) {
     std::cout << "zero_dist\n";
     return 0;
 }
@@ -162,5 +156,5 @@ static void foo() {
     std::size_t dist = distance(i, j);
 
     my_zero_dist_iterator first, last;
-    std::size_t zero = distance(first, last);
+    dist = distance(first, last);
 }

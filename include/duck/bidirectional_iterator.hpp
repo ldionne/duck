@@ -26,19 +26,18 @@ class BidirectionalIterator {
     DUCK_I_TEST_EXPRESSION(post_decrement, boost::declval<I&>()--, typename I);
 
 public:
-    using type =
-        typename boost::mpl::and_<
-            ForwardIterator<It>,
+    typedef typename boost::mpl::and_<
+                ForwardIterator<It>,
 
-            boost::is_convertible<
-                typename pre_decrement<It>::type,
-                typename boost::add_lvalue_reference<It>::type
-            >,
+                boost::is_convertible<
+                    typename pre_decrement<It>::type,
+                    typename boost::add_lvalue_reference<It>::type
+                >,
 
-            boost::is_convertible<
-                typename post_decrement<It>::type, It
-            >
-        >::type;
+                boost::is_convertible<
+                    typename post_decrement<It>::type, It
+                >
+            >::type type;
     static bool const value = type::value;
 };
 
