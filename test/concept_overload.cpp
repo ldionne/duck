@@ -2,7 +2,7 @@
  * Test suite for the concept-based overloading experiment.
  */
 
-#include <duck/sandbox/concept_overload.hpp>
+#include <duck/concept_overload.hpp>
 
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/mpl/bool.hpp>

@@ -2,8 +2,8 @@
  * This file defines facilities to perform concept-based overloading.
  */
 
-#ifndef DUCK_SANDBOX_CONCEPT_OVERLOAD_HPP
-#define DUCK_SANDBOX_CONCEPT_OVERLOAD_HPP
+#ifndef DUCK_CONCEPT_OVERLOAD_HPP
+#define DUCK_CONCEPT_OVERLOAD_HPP
 
 #include <duck/detail/mpl_extensions.hpp>
 
@@ -364,4 +364,4 @@ struct requires
 
 } // end namespace duck
 
-#endif // !DUCK_SANDBOX_CONCEPT_OVERLOAD_HPP
+#endif // !DUCK_CONCEPT_OVERLOAD_HPP
