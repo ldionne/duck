@@ -345,6 +345,7 @@ struct requires
  * resolution state for overloads within this family.
  */
 #define DUCK_ENABLE_CONCEPT_OVERLOADING(FUNCTION, CALL, .../*typenames*/)   \
+    template <typename ...>                                                 \
     ::duck::concept_based_overload_resolution_failed FUNCTION(...);         \
     /* This MUST be defined in the same namespace as the FUNCTION in */     \
     /* order for FUNCTION to be found via ADL later on.              */     \
@@ -358,7 +359,9 @@ struct requires
         };                                                                  \
     };                                                                      \
     namespace tag {                                                         \
-        typedef BOOST_PP_CAT(FUNCTION, __LINE__) FUNCTION;                  \
+        /* Do not use a typedef; it generates names like distance20 in */   \
+        /* error messages.                                             */   \
+        struct FUNCTION : BOOST_PP_CAT(FUNCTION, __LINE__) { };             \
     }                                                                       \
 /**/
 
