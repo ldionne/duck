@@ -6,9 +6,11 @@
 #define DUCK_DETAIL_MPL_EXTENSIONS_HPP
 
 #include <boost/mpl/apply.hpp>
+#include <boost/mpl/contains.hpp>
 #include <boost/mpl/end.hpp>
 #include <boost/mpl/find_if.hpp>
 #include <boost/mpl/not.hpp>
+#include <boost/mpl/placeholders.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 
@@ -40,6 +42,14 @@ namespace mpl {
     template <typename Sequence, typename Predicate>
     struct all_of
         : none_of<Sequence, all_of_detail::negate<Predicate> >
+    { };
+
+    template <typename Sequence, typename Types>
+    struct find_first_of
+        : find_if<
+            Sequence,
+            contains<Types, _>
+        >
     { };
 } // end namespace mpl
 } // end namespace boost

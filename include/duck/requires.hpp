@@ -61,9 +61,9 @@ struct concept_based_overload_resolution_failed
  *       where the `<` operator is a partial order meaning `A` is less
  *       specific than `B`.
  */
-template <typename A, typename B>
+template <typename A, typename B, typename Enable = void>
 struct is_more_specific_than
-    : boost::mpl::not_<is_more_specific_than<B, A> >
+    : boost::mpl::not_<is_more_specific_than<B, A, Enable> >
 { };
 
 /**
@@ -71,8 +71,8 @@ struct is_more_specific_than
  * where both concepts are the same, i.e. `is_more_specific_than<A, A>`. In
  * this trivial case, the trait is obviously false.
  */
-template <typename Concept>
-struct is_more_specific_than<Concept, Concept>
+template <typename Concept, typename Enable>
+struct is_more_specific_than<Concept, Concept, Enable>
     : boost::mpl::false_
 { };
 
