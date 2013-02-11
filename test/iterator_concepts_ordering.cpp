@@ -15,6 +15,10 @@ BOOST_MPL_ASSERT((duck::is_more_specific_than<
                     duck::IncrementableIterator,
                     duck::RandomAccessIterator>));
 
+BOOST_MPL_ASSERT((duck::is_more_specific_than<
+                    duck::ForwardIterator,
+                    duck::RandomAccessIterator>));
+
 
 BOOST_MPL_ASSERT_NOT((duck::is_more_specific_than<
                         duck::RandomAccessIterator,
@@ -26,4 +30,8 @@ BOOST_MPL_ASSERT_NOT((duck::is_more_specific_than<
 
 BOOST_MPL_ASSERT_NOT((duck::is_more_specific_than<
                         duck::ForwardIterator,
+                        duck::ForwardIterator>));
+
+BOOST_MPL_ASSERT_NOT((duck::is_more_specific_than<
+                        duck::RandomAccessIterator,
                         duck::ForwardIterator>));
