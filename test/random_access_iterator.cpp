@@ -1,5 +1,5 @@
 /**
- * Test suite for the @em RandomAccessIterator concept.
+ * Test suite for the `RandomAccessIterator` concept.
  */
 
 #include <duck/random_access_iterator.hpp>
