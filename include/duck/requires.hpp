@@ -346,20 +346,19 @@ struct requires
  */
 #define DUCK_ENABLE_CONCEPT_OVERLOADING(FUNCTION, CALL, .../*typenames*/)   \
     ::duck::concept_based_overload_resolution_failed FUNCTION(...);         \
-    namespace tag {                                                         \
-        /* We can't call the structure FUNCTION because it would clash */   \
-        /* with the CALL expansion. */                                      \
-        struct BOOST_PP_CAT(FUNCTION, _tag) {                               \
-            template <typename State>                                       \
-            struct perform_overload {                                       \
-                template <__VA_ARGS__>                                      \
-                struct apply {                                              \
-                    typedef decltype(CALL) type;                            \
-                };                                                          \
+    /* This MUST be defined in the same namespace as the FUNCTION in */     \
+    /* order for FUNCTION to be found via ADL later on.              */     \
+    struct BOOST_PP_CAT(FUNCTION, __LINE__) {                               \
+        template <typename State>                                           \
+        struct perform_overload {                                           \
+            template <__VA_ARGS__>                                          \
+            struct apply {                                                  \
+                typedef decltype(CALL) type;                                \
             };                                                              \
         };                                                                  \
-        /* Now we can make the alias */                                     \
-        typedef BOOST_PP_CAT(FUNCTION, _tag) FUNCTION;                      \
+    };                                                                      \
+    namespace tag {                                                         \
+        typedef BOOST_PP_CAT(FUNCTION, __LINE__) FUNCTION;                  \
     }                                                                       \
 /**/
 
