@@ -6,11 +6,11 @@
 #define DUCK_WRITEABLE_ITERATOR_HPP
 
 #include <duck/copy_constructible.hpp>
-#include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
 
 #include <boost/mpl/and.hpp>
 #include <boost/utility/declval.hpp>
+#include <iterator>
 
 
 namespace duck {
@@ -18,7 +18,7 @@ namespace duck {
 namespace writeable_detail {
     template <typename Iterator>
     struct default_value {
-        typedef typename detail::iterator_traits<Iterator>::value_type type;
+        typedef typename std::iterator_traits<Iterator>::value_type type;
     };
 }
 

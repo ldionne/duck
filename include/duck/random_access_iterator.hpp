@@ -7,7 +7,6 @@
 
 #include <duck/bidirectional_iterator.hpp>
 #include <duck/comparable.hpp>
-#include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
 #include <duck/models.hpp>
 #include <duck/readable_iterator.hpp>
@@ -19,6 +18,7 @@
 #include <boost/type_traits/add_lvalue_reference.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/declval.hpp>
+#include <iterator>
 
 
 namespace duck {
@@ -42,9 +42,9 @@ class is_random_access_iterator_impl {
         boost::declval<I>()[boost::declval<N>()] = boost::declval<V>(),
                                         typename I, typename N, typename V);
     DUCK_I_TEST_TYPE(value_type_,
-                typename detail::iterator_traits<I>::value_type, typename I);
+                typename std::iterator_traits<I>::value_type, typename I);
     DUCK_I_TEST_TYPE(difference_type_,
-            typename detail::iterator_traits<I>::difference_type, typename I);
+            typename std::iterator_traits<I>::difference_type, typename I);
 
     typedef typename value_type_<Iterator>::type Value;
     typedef typename difference_type_<Iterator>::type Difference;

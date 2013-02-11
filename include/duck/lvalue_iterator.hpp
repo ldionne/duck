@@ -5,13 +5,13 @@
 #ifndef DUCK_LVALUE_ITERATOR_HPP
 #define DUCK_LVALUE_ITERATOR_HPP
 
-#include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
 
 #include <boost/mpl/and.hpp>
-#include <boost/utility/declval.hpp>
 #include <boost/type_traits/add_lvalue_reference.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+#include <boost/utility/declval.hpp>
+#include <iterator>
 
 
 namespace duck {
@@ -25,7 +25,7 @@ class is_lvalue_iterator {
     DUCK_I_TEST_EXPRESSION(dereference, const_cast<V&>(*boost::declval<I>()),
                                                     typename I, typename V);
     DUCK_I_TEST_TYPE(value_type_,
-                typename detail::iterator_traits<I>::value_type, typename I);
+                typename std::iterator_traits<I>::value_type, typename I);
     typedef typename value_type_<Iterator>::type Value;
 
 public:

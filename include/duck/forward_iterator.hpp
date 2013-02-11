@@ -6,7 +6,6 @@
 #define DUCK_FORWARD_ITERATOR_HPP
 
 #include <duck/default_constructible.hpp>
-#include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
 #include <duck/models.hpp>
 #include <duck/single_pass_iterator.hpp>
@@ -14,6 +13,7 @@
 #include <boost/mpl/and.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_signed.hpp>
+#include <iterator>
 
 
 namespace duck {
@@ -22,7 +22,7 @@ namespace forward_detail {
 template <typename Iterator>
 class is_forward_iterator_impl {
     DUCK_I_TEST_TYPE(difference_type_,
-            typename detail::iterator_traits<I>::difference_type, typename I);
+            typename std::iterator_traits<I>::difference_type, typename I);
     typedef typename difference_type_<Iterator>::type Difference;
 
 public:

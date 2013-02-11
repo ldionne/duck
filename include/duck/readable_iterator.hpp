@@ -7,12 +7,12 @@
 
 #include <duck/assignable.hpp>
 #include <duck/copy_constructible.hpp>
-#include <duck/detail/config.hpp>
 #include <duck/detail/test_expression.hpp>
 
 #include <boost/mpl/and.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/declval.hpp>
+#include <iterator>
 
 
 namespace duck {
@@ -25,7 +25,7 @@ template <typename Iterator>
 class is_readable_iterator {
     DUCK_I_TEST_EXPRESSION(dereference, *boost::declval<I>(), typename I);
     DUCK_I_TEST_TYPE(value_type_,
-                typename detail::iterator_traits<I>::value_type, typename I);
+                typename std::iterator_traits<I>::value_type, typename I);
     typedef typename value_type_<Iterator>::type Value;
 
 public:

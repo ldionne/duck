@@ -3,9 +3,9 @@
  */
 
 #include <duck/forward_iterator.hpp>
-#include <duck/detail/config.hpp>
 
 #include <boost/mpl/assert.hpp>
+#include <iterator>
 #include <vector>
 
 
@@ -42,8 +42,11 @@ struct with_difference_type {
     bool operator==(with_difference_type const&) const;
     bool operator!=(with_difference_type const&) const;
 };
-template <>
-struct duck::detail::iterator_traits<with_difference_type> {
-    using difference_type = long;
-};
+
+namespace std {
+    template <>
+    struct iterator_traits<with_difference_type> {
+        typedef long difference_type;
+    };
+}
 ASSERT_FI(with_difference_type);
