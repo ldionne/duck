@@ -8,6 +8,8 @@
 #include <duck/assignable.hpp>
 #include <duck/copy_constructible.hpp>
 #include <duck/detail/test_expression.hpp>
+// makes it available to all the other iterator concepts
+#include <duck/detail/iterator_concepts_ordering.hpp>
 
 #include <boost/mpl/and.hpp>
 #include <boost/type_traits/add_lvalue_reference.hpp>
